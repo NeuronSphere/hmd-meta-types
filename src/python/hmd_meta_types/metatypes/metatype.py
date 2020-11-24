@@ -1,17 +1,21 @@
-from typing import Dict, Any, Tuple
+from typing import Dict, Any, Tuple, List
 from collections import OrderedDict
+from hmd_meta_types.metatypes.extension import Extension
 
 from hmd_meta_types.utils import snake_to_pascal
 from ..primitives import Attribute
 
 
 class MetaType(type):
+    __extensions = {".": []}
+
     def __new__(
         cls,
         name: str,
         bases: Tuple[Any],
         class_dict: Dict[str, Any],
         definition: Dict[str, Any] = None,
+        extensions: List[Extension] = list(),
         **kwargs,
     ):
         if definition is None:
@@ -25,34 +29,11 @@ class MetaType(type):
         if snake_to_pascal(metatype) not in [base.__name__ for base in bases]:
             raise Exception(f"Invalid metatype defined for {name}: {metatype}")
 
-        ns = OrderedDict()
-        ns["__metatype"] = metatype
-        ns["__namespace"] = definition.get("namespace", None)
-        ns["__definition"] = definition
+        ns = MetaType.build_initial_namespace(metatype=metatype, definition=definition)
         attrs = definition.get("attributes", [])
-        ns["__attributes"] = []
-        ns["__required_attributes"] = []
 
-        for key, attr in attrs.items():
-            _type = attr.get("type", "string") if type(attr) == dict else attr
-            desc = None
-            definition = None
-            metadata = None
-            if type(attr) == dict:
-                desc = attr.get("description", None)
-                definition = attr.get("definition", None)
-                del attr["type"]
-                if "description" in attr:
-                    del attr["description"]
-                if "definition" in attr:
-                    del attr["definition"]
-                if attr.get("required", False):
-                    ns["__required_attributes"].append(key)
-                metadata = attr
-            ns[key] = Attribute(
-                _type, definition=definition, description=desc, addtl_metadata=metadata
-            )
-            ns["__attributes"].append(key)
+        MetaType.add_attributes(ns, attrs)
+        ns = MetaType.apply_extensions(ns, extensions=extensions)
 
         def init(self, *args, **kwargs):
             required = getattr(self, "__required_attributes", [])
@@ -77,3 +58,55 @@ class MetaType(type):
         ns["__setitem__"] = set_item
 
         return super().__new__(cls, snake_to_pascal(name), bases, ns)
+
+    @classmethod
+    def register_extensions(metacls, exts=list()) -> None:
+        for ext in exts:
+            if not issubclass(ext, Extension):
+                return
+
+            if ext.extends in metacls.__extensions:
+                metacls.__extensions[ext.extends].append(ext)
+
+    @classmethod
+    def build_initial_namespace(
+        metacls, metatype: str, definition: Dict[str, Any] = {}
+    ) -> Dict:
+        ns = dict()
+        ns["__metatype"] = metatype
+        ns["__namespace"] = definition.get("namespace", None)
+        ns["__definition"] = definition
+        ns["__attributes"] = []
+        ns["__required_attributes"] = []
+
+        return ns
+
+    @classmethod
+    def add_attributes(metacls, ns: Dict, attrs=list()) -> None:
+        for key, attr in attrs.items():
+            _type = attr.get("type", "string") if type(attr) == dict else attr
+            desc = None
+            definition = None
+            metadata = None
+            if type(attr) == dict:
+                desc = attr.get("description", None)
+                definition = attr.get("definition", None)
+                del attr["type"]
+                if "description" in attr:
+                    del attr["description"]
+                if "definition" in attr:
+                    del attr["definition"]
+                if attr.get("required", False):
+                    ns["__required_attributes"].append(key)
+                metadata = attr
+            ns[key] = Attribute(
+                _type, definition=definition, description=desc, addtl_metadata=metadata
+            )
+            ns["__attributes"].append(key)
+
+    @classmethod
+    def apply_extensions(metacls, ns: Dict, extensions: List = list()) -> Dict:
+        for ext in extensions:
+            ns = ext.merge(ns)
+
+        return ns

@@ -1,0 +1,24 @@
+@startuml "Class Architecture"
+
+abstract class MetaType
+
+class Noun {
+    +get_attribute(attr_name: str): Attribute
+}
+
+class Extension {
+    +add_operations
+}
+
+class Attribute {
+    +get_type
+    +metadata
+}
+
+MetaType <-- Noun : metaclass
+MetaType <-- Extension : metaclass
+Noun *-- Attribute
+
+Noun .. Extension : extends
+
+@enduml
