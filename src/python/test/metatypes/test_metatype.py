@@ -87,10 +87,11 @@ class TestMetaType:
             "location",
             "state",
         ]
+        assert klass.__name__ == "ClusterDefinition"
 
         example = klass(id="test", name="test", type="exampe", location="local")
 
-        assert example.name == "test"
+        assert example["name"] == "test"
         assert example.id == "test"
 
         example.name = "another_test"

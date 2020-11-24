@@ -1,5 +1,7 @@
 from typing import Dict, Any, Tuple
 from collections import OrderedDict
+
+from hmd_meta_types.utils import snake_to_pascal
 from ..primitives import Attribute
 
 
@@ -20,9 +22,7 @@ class MetaType(type):
         if not metatype:
             return super().__new__(cls, name, bases, class_dict)
 
-        if MetaType.__capitalize_name(metatype) not in [
-            base.__name__ for base in bases
-        ]:
+        if snake_to_pascal(metatype) not in [base.__name__ for base in bases]:
             raise Exception(f"Invalid metatype defined for {name}: {metatype}")
 
         ns = OrderedDict()
@@ -67,7 +67,7 @@ class MetaType(type):
                     vars(type(self))[attr].set_value(self, kwargs[attr])
 
         def get_item(self, key):
-            return self.__dict__[key]
+            return self.__dict__[f"__{key}"]
 
         def set_item(self, key, value):
             self.__dict__[key] = value
@@ -76,9 +76,4 @@ class MetaType(type):
         ns["__getitem__"] = get_item
         ns["__setitem__"] = set_item
 
-        return super().__new__(cls, name, bases, ns)
-
-    @staticmethod
-    def __capitalize_name(name: str) -> str:
-        names = name.split("_")
-        return "".join([n.capitalize() for n in names])
+        return super().__new__(cls, snake_to_pascal(name), bases, ns)
