@@ -1,3 +1,4 @@
+from hmd_meta_types.primitives.attribute import Attribute
 from .metatype import MetaType
 
 
@@ -16,3 +17,6 @@ class Noun(metaclass=MetaType):
         result = attrs[self.i]
         self.i += 1
         return result
+
+    def get_attribute(self, attr_name: str) -> Attribute:
+        return vars(type(self))[attr_name]

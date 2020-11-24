@@ -23,5 +23,16 @@ class TestNoun:
 
     def test_iter(self, example):
         ex_iter = iter(example)
+
         assert next(ex_iter) == "id"
         assert next(ex_iter) == "name"
+
+    def test_get_attribute(self, example):
+        attr = example.get_attribute("name")
+
+        assert isinstance(attr, Attribute)
+        assert attr.metadata() == {
+            "description": "The name of the cluster",
+            "required": True,
+        }
+        assert attr.get_type() == "string"
