@@ -7,7 +7,8 @@ METATYPES = {"noun": Noun}
 
 
 class DefinitionDecoder(json.JSONDecoder):
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, extensions=[], *args, **kwargs) -> None:
+        self.extensions = extensions
         json.JSONDecoder.__init__(self, object_hook=self.object_hook, *args, **kwargs)
 
     def object_hook(self, obj):
@@ -22,6 +23,6 @@ class DefinitionDecoder(json.JSONDecoder):
         metatype = METATYPES.get(obj["metatype"], None)
 
         if metatype is None:
-            raise json.JSONDecodeError(f"Invalid metatype {metatype} in definition.")
+            raise Exception(f"Invalid metatype {obj['metatype']} in definition.")
 
-        return type(name, (metatype,), {}, definition=obj)
+        return type(name, (metatype,), {}, definition=obj, extensions=self.extensions)

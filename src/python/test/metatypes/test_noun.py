@@ -26,6 +26,13 @@ class TestNoun:
 
         assert next(ex_iter) == "id"
         assert next(ex_iter) == "name"
+        assert next(ex_iter) == "type"
+        assert next(ex_iter) == "location"
+
+        with pytest.raises(StopIteration):
+            for i in ex_iter:
+                pass
+            next(ex_iter)
 
     def test_get_attribute(self, example):
         attr = example.get_attribute("name")

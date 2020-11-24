@@ -51,22 +51,13 @@ class MetaType(type):
             return self.__dict__[f"__{key}"]
 
         def set_item(self, key, value):
-            self.__dict__[key] = value
+            self.__dict__[f"__{key}"] = value
 
         ns["__init__"] = init
         ns["__getitem__"] = get_item
         ns["__setitem__"] = set_item
 
         return super().__new__(cls, snake_to_pascal(name), bases, ns)
-
-    @classmethod
-    def register_extensions(metacls, exts=list()) -> None:
-        for ext in exts:
-            if not issubclass(ext, Extension):
-                return
-
-            if ext.extends in metacls.__extensions:
-                metacls.__extensions[ext.extends].append(ext)
 
     @classmethod
     def build_initial_namespace(

@@ -1,4 +1,5 @@
 import json
+from json.decoder import JSONDecodeError
 
 import pytest
 
@@ -11,6 +12,17 @@ def definition_json(example_definition):
 
 
 class TestDecoder:
+    def test_invalid_metatype(self):
+        with pytest.raises(Exception) as e:
+            json_str = """
+            {
+                "name": "test",
+                "metatype": "foo"
+            }
+            """
+            json.loads(json_str, cls=DefinitionDecoder)
+        assert "Invalid metatype foo in definition." in str(e.value)
+
     def test_decode(self, definition_json):
         klass = json.loads(definition_json, cls=DefinitionDecoder)
 

@@ -56,3 +56,6 @@ class TestExtensions:
         assert example.run_op() == "op"
 
         assert example.diff_op() == "diff"
+
+        op = klass.get_operation("run_op")
+        assert op is not None

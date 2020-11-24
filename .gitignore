@@ -133,5 +133,6 @@ yarn-debug.log*
 yarn-error.log*
 
 **/__pycache__/
+**/*.egg-info/
 **/*.egg_info/
 **/.pytest_cache/
