@@ -55,7 +55,7 @@ class Attribute:
         if type(value) != _pytype:
             raise Exception(f"Invalid value ({value}) being set to {self.public_name}")
 
-        if _type == "enum" and value not in self.__definition:
+        if _type == "enum" and value not in definition:
             raise Exception(f"Invalid enum value: {value}")
 
         if _type == "object":
