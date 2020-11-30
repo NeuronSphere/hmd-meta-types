@@ -26,9 +26,6 @@ class MetaType(type):
         if not metatype:
             return super().__new__(cls, name, bases, class_dict)
 
-        if snake_to_pascal(metatype) not in [base.__name__ for base in bases]:
-            raise Exception(f"Invalid metatype defined for {name}: {metatype}")
-
         ns = MetaType.build_initial_namespace(metatype=metatype, definition=definition)
         attrs = definition.get("attributes", [])
 
@@ -103,7 +100,6 @@ class MetaType(type):
         return ns
 
     def __iter__(cls):
-        print("iter")
         cls.i = 0
         return cls
 

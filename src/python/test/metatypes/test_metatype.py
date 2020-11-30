@@ -110,16 +110,6 @@ class TestMetaType:
 
         assert not hasattr(klass, "__metatype")
 
-    def test_invalid_metatype(self):
-        definition = {"metatype": "bar"}
-
-        class Example(metaclass=MetaType):
-            pass
-
-        with pytest.raises(Exception) as e:
-            klass = type("FooBar", (Example,), {}, definition=definition)
-        assert "Invalid metatype defined for FooBar: bar" in str(e.value)
-
     def test_missing_required_attributes(self):
         class Example(metaclass=MetaType):
             pass
