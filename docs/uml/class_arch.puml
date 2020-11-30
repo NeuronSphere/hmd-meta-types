@@ -1,24 +1,72 @@
 @startuml "Class Architecture"
 
-abstract class MetaType
 
-class Noun {
-    +get_attribute(attr_name: str): Attribute
+class TypeFactory {
+    +MetaType build(definition: TypeDefinition, extensions: [Extension])
 }
 
-class Extension {
-    +add_operations
+package metatypes {
+    abstract class MetaType <<metaclass>>
+    class Noun {
+        +get_attribute(attr_name: str): Attribute
+    }
+
+    class Verb {
+        +get_attribute(attr_name: str): Attribute
+    }
+
+    class Relationship {
+        +get_attribute(attr_name: str): Attribute
+    }
 }
 
-class Attribute {
-    +get_type
-    +metadata
+package primitives {
+    class Attribute {
+        - type_
+        - metadata
+        +get_type()
+        +metadata()
+    }
+
+    class Operation {
+        - fn
+        - metadata
+        +get_fn()
+        +metadata()
+        +__call__()
+    }
 }
 
-MetaType <-- Noun : metaclass
-MetaType <-- Extension : metaclass
+package extensions {
+    class Extension <<decorator>> {
+        +merge()
+    }
+}
+
+package parser {
+    class TypeDefinition {
+        +name
+        +namespace
+        +metatype
+        +bases
+        +attributes
+        +operations
+    }
+}
+
+
+MetaType <|-- Noun : metaclass
+MetaType <|-- Verb : metaclass
+MetaType <|-- Relationship : metaclass
 Noun *-- Attribute
+Noun *-- Operation
+Verb *-- Attribute
+Verb *-- Operation
+Relationship *-- Attribute
+Relationship *-- Operation
 
-Noun .. Extension : extends
+Extension *--"0..*" Attribute
+Extension *--"0..*" Operation
+
 
 @enduml

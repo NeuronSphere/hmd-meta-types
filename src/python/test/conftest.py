@@ -1,3 +1,4 @@
+import json
 import pytest
 
 
@@ -65,3 +66,8 @@ def example_definition():
             },
         },
     }
+
+
+@pytest.fixture()
+def definition_json(example_definition):
+    return json.dumps(example_definition)

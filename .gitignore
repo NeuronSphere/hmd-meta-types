@@ -136,3 +136,4 @@ yarn-error.log*
 **/*.egg-info/
 **/*.egg_info/
 **/.pytest_cache/
+src/python/.coverage

@@ -43,5 +43,4 @@ def operation(orig_fn=None, operation_name: str = None):
     if orig_fn:
         return decorator(orig_fn)
 
-    print(operation_name)
     return decorator

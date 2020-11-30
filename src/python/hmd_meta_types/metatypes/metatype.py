@@ -101,3 +101,19 @@ class MetaType(type):
             ns = ext.merge(ns)
 
         return ns
+
+    def __iter__(cls):
+        print("iter")
+        cls.i = 0
+        return cls
+
+    def __next__(cls):
+        attrs = getattr(cls, "__attributes", [])
+        attr_len = len(attrs)
+
+        if cls.i >= attr_len:
+            raise StopIteration
+
+        result = attrs[cls.i]
+        cls.i += 1
+        return result

@@ -1,16 +1,22 @@
 import pytest
 
 from hmd_meta_types.metatypes.noun import Noun
+from hmd_meta_types.metatypes.metatype import MetaType
 from hmd_meta_types.primitives.attribute import Attribute
 
 
 @pytest.fixture()
-def example(example_definition):
+def example_class(example_definition):
     definition = example_definition
 
-    Example = type("cluster_definition", (Noun,), {}, definition=definition)
+    Example = MetaType("cluster_definition", (Noun,), {}, definition=definition)
+    return Example
 
-    return Example(id="test", name="test", type="example", location="local")
+
+@pytest.fixture()
+def example(example_class):
+
+    return example_class(id="test", name="test", type="example", location="local")
 
 
 class TestNoun:
@@ -21,8 +27,8 @@ class TestNoun:
         example.name = "another_test"
         assert example.name == "another_test"
 
-    def test_iter(self, example):
-        ex_iter = iter(example)
+    def test_iter(self, example_class):
+        ex_iter = iter(example_class)
 
         assert next(ex_iter) == "id"
         assert next(ex_iter) == "name"
@@ -34,8 +40,8 @@ class TestNoun:
                 pass
             next(ex_iter)
 
-    def test_get_attribute(self, example):
-        attr = example.get_attribute("name")
+    def test_get_attribute(self, example_class):
+        attr = example_class.get_attribute("name")
 
         assert isinstance(attr, Attribute)
         assert attr.metadata() == {
