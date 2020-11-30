@@ -31,6 +31,9 @@ class Attribute:
     def metadata(self):
         return self.__metadata
 
+    def definition(self):
+        return self.__definition
+
     def __get__(self, obj, owner=None):
         value = getattr(obj, self.private_name, None)
         return value

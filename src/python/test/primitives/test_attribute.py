@@ -14,6 +14,57 @@ class TestAttribute:
             attr = Attribute("enum", "test", addtl_metadata={"test": "124"})
         assert "Missing attribute definition" in str(e.value)
 
+        attr = Attribute(
+            "array",
+            "test",
+            definition={
+                "items": {
+                    "type": "object",
+                    "definition": {
+                        "name": {
+                            "description": "The service name",
+                            "type": "string",
+                            "required": True,
+                        },
+                        "host": {
+                            "description": "The hostname on which the service is exposed.",
+                            "type": "string",
+                            "required": True,
+                        },
+                        "port": {
+                            "description": "The port on which the service is exposed.",
+                            "type": "integer",
+                            "required": True,
+                        },
+                    },
+                }
+            },
+            addtl_metadata={"test": "124"},
+        )
+
+        assert attr.definition() == {
+            "items": {
+                "type": "object",
+                "definition": {
+                    "name": {
+                        "description": "The service name",
+                        "type": "string",
+                        "required": True,
+                    },
+                    "host": {
+                        "description": "The hostname on which the service is exposed.",
+                        "type": "string",
+                        "required": True,
+                    },
+                    "port": {
+                        "description": "The port on which the service is exposed.",
+                        "type": "integer",
+                        "required": True,
+                    },
+                },
+            }
+        }
+
     def test_get_set_simple(self):
         class Example:
             attr = Attribute("string", "test", addtl_metadata={"test": "124"})
