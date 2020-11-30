@@ -45,7 +45,7 @@ class MetaType(type):
                     vars(type(self))[attr].set_value(self, kwargs[attr])
 
         def get_item(self, key):
-            return self.__dict__[f"__{key}"]
+            return self.__dict__.get(f"__{key}", None)
 
         def set_item(self, key, value):
             self.__dict__[f"__{key}"] = value
@@ -61,6 +61,7 @@ class MetaType(type):
         metacls, metatype: str, definition: Dict[str, Any] = {}
     ) -> Dict:
         ns = dict()
+        ns["__typename"] = definition["name"]
         ns["__metatype"] = metatype
         ns["__namespace"] = definition.get("namespace", None)
         ns["__definition"] = definition

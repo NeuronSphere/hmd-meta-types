@@ -6,3 +6,7 @@ class Noun(metaclass=MetaType):
     @classmethod
     def get_attribute(cls, attr_name: str) -> Attribute:
         return vars(cls)[attr_name]
+
+    @classmethod
+    def get_definition(cls):
+        return getattr(cls, "__definition")

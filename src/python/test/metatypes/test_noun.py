@@ -49,3 +49,6 @@ class TestNoun:
             "required": True,
         }
         assert attr.get_type() == "string"
+
+    def test_get_definition(self, example_class, example_definition):
+        assert example_class.get_definition() == example_definition
