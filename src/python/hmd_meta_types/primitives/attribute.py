@@ -15,12 +15,14 @@ class Attribute:
         self,
         _type: str,
         description: str = "",
+        required: bool = False,
         definition: Union[List[str], Dict[str, Any]] = None,
         addtl_metadata: Dict[str, Any] = {},
     ) -> None:
         self.__type = _type
         self.__metadata = {"description": description, **addtl_metadata}
         self.__definition = definition
+        self.required = required
 
         if _type in ["object", "array", "enum"] and definition is None:
             raise Exception("Missing attribute definition")
@@ -39,7 +41,10 @@ class Attribute:
         return value
 
     def __set__(self, obj, value):
-        self.__validate(self.__type, value, self.__definition)
+        if value is not None:
+            self.__validate(self.__type, value, self.__definition)
+        elif self.required:
+            raise Exception(f"{self.public_name} is required")
         setattr(obj, self.private_name, value)
 
     def set_value(self, obj, value):

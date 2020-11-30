@@ -89,7 +89,11 @@ class MetaType(type):
                     ns["__required_attributes"].append(key)
                 metadata = attr
             ns[key] = Attribute(
-                _type, definition=definition, description=desc, addtl_metadata=metadata
+                _type,
+                definition=definition,
+                required=attr.get("required", False),
+                description=desc,
+                addtl_metadata=metadata,
             )
             ns["__attributes"].append(key)
 

@@ -86,6 +86,22 @@ class TestAttribute:
         example.attr = 1
 
         assert example.attr == 1
+        example.attr = None
+        assert example.attr is None
+
+        class ExampleThree:
+            attr = Attribute(
+                "integer", "test", required=True, addtl_metadata={"test": "124"}
+            )
+
+        example = ExampleThree()
+        example.attr = 1
+
+        assert example.attr == 1
+        with pytest.raises(Exception) as e:
+            example.attr = None
+
+        assert "attr is required" in str(e.value)
 
     def test_get_set_complex(self):
         class ExampleEnum:
