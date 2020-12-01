@@ -73,7 +73,7 @@ class Attribute:
                         )
                     self.__validate(
                         attr.get("type", "string"),
-                        value[key],
+                        value.get(key, None),
                         attr.get("definition", {}),
                     )
         elif _type == "array":
