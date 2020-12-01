@@ -26,11 +26,13 @@ class MetaType(type):
         if not metatype:
             return super().__new__(cls, name, bases, class_dict)
 
+        extension_cfgs = definition.pop("extensions", {})
+
         ns = MetaType.build_initial_namespace(metatype=metatype, definition=definition)
         attrs = definition.get("attributes", [])
 
         MetaType.add_attributes(ns, attrs)
-        ns = MetaType.apply_extensions(ns, extensions=extensions)
+        ns = MetaType.apply_extensions(ns, extensions=extensions, cfg=extension_cfgs)
 
         def init(self, *args, **kwargs):
             required = getattr(self, "__required_attributes", [])
@@ -98,9 +100,25 @@ class MetaType(type):
             ns["__attributes"].append(key)
 
     @classmethod
-    def apply_extensions(metacls, ns: Dict, extensions: List = list()) -> Dict:
+    def apply_extensions(
+        metacls, ns: Dict, extensions: List = list(), cfg: Dict[str, Any] = dict()
+    ) -> Dict:
+        def list_operations(cls):
+            return cls._operations
+
+        def get_operation(cls, name: str):
+            if name in cls._operations:
+                return cls.__dict__.get(name, None)
+
         for ext in extensions:
-            ns = ext.merge(ns)
+            if ext.extends == "." or ext.extends == ns["name"]:
+                ext_cfg = cfg.get(ext.extension_config, {})
+                ns = ext.apply_extension(ns, config=ext_cfg)
+            else:
+                ns["_operations"] = []
+
+            ns["list_operations"] = classmethod(list_operations)
+            ns["get_operation"] = classmethod(get_operation)
 
         return ns
 

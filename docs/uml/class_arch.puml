@@ -40,17 +40,7 @@ package primitives {
 package extensions {
     class Extension <<decorator>> {
         +merge()
-    }
-}
-
-package parser {
-    class TypeDefinition {
-        +name
-        +namespace
-        +metatype
-        +bases
-        +attributes
-        +operations
+        +configure()
     }
 }
 
@@ -67,6 +57,8 @@ Relationship *-- Operation
 
 Extension *--"0..*" Attribute
 Extension *--"0..*" Operation
+
+TypeFactory .. MetaType : produces
 
 
 @enduml
