@@ -35,14 +35,14 @@ class TestExtensions:
         @Extension("test")
         class OpExt:
             @operation
-            def run_op(self):
+            def run_op():
                 return "op"
 
             @operation(operation_name="diff_op")
-            def op_again(self):
+            def op_again():
                 return "diff"
 
-            def no_op(self):
+            def no_op():
                 return "no op"
 
         klass = MetaType(
@@ -66,14 +66,14 @@ class TestExtensions:
         @Extension("test", type_name="test")
         class OpExt:
             @operation
-            def run_op(self):
+            def run_op():
                 return "op"
 
             @operation(operation_name="diff_op")
-            def op_again(self):
+            def op_again():
                 return "diff"
 
-            def no_op(self):
+            def no_op():
                 return "no op"
 
         klass = MetaType(
@@ -97,14 +97,14 @@ class TestExtensions:
                 return cdict
 
             @operation
-            def run_op(self):
+            def run_op():
                 return "op"
 
             @operation(operation_name="diff_op")
-            def op_again(self):
+            def op_again():
                 return "diff"
 
-            def no_op(self):
+            def no_op():
                 return "no op"
 
         example_definition["extensions"] = {"test": {"diff_op": False}}

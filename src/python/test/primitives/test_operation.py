@@ -18,14 +18,14 @@ class TestOperation:
     def test_operation_is_callable(self):
         op = Operation("test_op", fn=lambda self: self.name)
 
-        assert op() == "test_op"
+        assert op(op) == "test_op"
 
     def test_operation_call_accepts_args(self):
-        op = Operation("test_op", fn=lambda self, arg1: arg1)
+        op = Operation("test_op", fn=lambda arg1: arg1)
 
         assert op("test") == "test"
 
     def test_operation_call_accepts_kwds(self):
-        op = Operation("test_op", fn=lambda self, arg1, test=None: test)
+        op = Operation("test_op", fn=lambda arg1, test=None: test)
 
         assert op("nope", test="test") == "test"
