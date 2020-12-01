@@ -138,7 +138,6 @@ class TestAttribute:
                             "host": {
                                 "description": "The hostname on which the service is exposed.",
                                 "type": "string",
-                                "required": True,
                             },
                             "port": {
                                 "description": "The port on which the service is exposed.",
@@ -158,7 +157,7 @@ class TestAttribute:
 
         with pytest.raises(Exception) as e:
             example.attr = [{"name": "test"}]
-        assert "Missing key host in attribute attr" in str(e.value)
+        assert "Missing key port in attribute attr" in str(e.value)
 
         with pytest.raises(Exception) as e:
             example.attr = [{"name": "test", "host": "localhost", "port": "3306"}]
