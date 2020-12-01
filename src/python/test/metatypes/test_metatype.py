@@ -28,6 +28,7 @@ class TestMetaType:
                     "type": "string",
                 },
                 "location": {"description": "", "required": True, "type": "string"},
+                "source": {"ref": "meta.physical.test"},
                 "state": {
                     "description": "The current state of the cluster.",
                     "type": "object",
@@ -86,6 +87,7 @@ class TestMetaType:
             "name",
             "type",
             "location",
+            "source",
             "state",
         ]
         assert klass.__name__ == "ClusterDefinition"

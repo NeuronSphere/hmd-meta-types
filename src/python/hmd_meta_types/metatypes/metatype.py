@@ -3,7 +3,7 @@ from collections import OrderedDict
 from hmd_meta_types.metatypes.extension import Extension
 
 from hmd_meta_types.utils import snake_to_pascal
-from ..primitives import Attribute
+from ..primitives import Attribute, Reference
 
 
 class MetaType(type):
@@ -80,6 +80,10 @@ class MetaType(type):
             definition = None
             metadata = None
             if type(attr) == dict:
+                if "ref" in attr:
+                    ns[key] = Reference(attr["ref"])
+                    ns["__attributes"].append(key)
+                    continue
                 desc = attr.get("description", None)
                 definition = attr.get("definition", None)
                 del attr["type"]
