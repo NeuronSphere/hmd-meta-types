@@ -122,6 +122,9 @@ class MetaType(type):
 
         return ns
 
+    def get_type_name(cls):
+        return getattr(cls, "__typename")
+
     def __iter__(cls):
         cls.i = 0
         return cls
