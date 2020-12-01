@@ -1,5 +1,4 @@
 from typing import Dict, Any, Tuple, List
-from collections import OrderedDict
 from hmd_meta_types.metatypes.extension import Extension
 
 from hmd_meta_types.utils import snake_to_pascal

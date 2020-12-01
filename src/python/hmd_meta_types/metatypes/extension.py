@@ -27,6 +27,11 @@ class Extension:
         def merge(cls, odict=dict(), config: Dict[str, Any] = dict()):
             operations = odict.get("_operations", [])
             cls_dict = config_fn(config, cdict)
+            cls_dict = {
+                k: v
+                for k, v in cls_dict.items()
+                if not k.startswith("__") and not k.endswith("__")
+            }
             return {**odict, **cls_dict, "_operations": [*operations, *cls._operations]}
 
         cdict["_operations"] = cls_operations
