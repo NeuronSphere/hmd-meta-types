@@ -2,7 +2,7 @@ from typing import Dict, List, Any
 
 from hmd_meta_types.metatypes.metatype import MetaType
 from hmd_meta_types.metatypes import Noun
-from hmd_meta_types.metatypes.extension import Extension
+from hmd_meta_types.metatypes.extension import Extension, configuration
 from hmd_meta_types.primitives import Operation
 
 
