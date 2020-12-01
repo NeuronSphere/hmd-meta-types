@@ -7,4 +7,4 @@ class Operation:
         self.fn = fn
 
     def __call__(self, *args: Any, **kwds: Any) -> Any:
-        return self.fn(self, *args, **kwds)
+        return self.fn(*args, **kwds)
