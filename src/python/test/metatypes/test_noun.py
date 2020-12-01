@@ -52,3 +52,9 @@ class TestNoun:
 
     def test_get_definition(self, example_class, example_definition):
         assert example_class.get_definition() == example_definition
+
+    def test_serialize(self, example):
+        example_dict = example.serialize()
+
+        assert isinstance(example_dict, dict)
+        assert example_dict["name"] == "test"

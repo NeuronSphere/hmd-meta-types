@@ -10,3 +10,10 @@ class Noun(metaclass=MetaType):
     @classmethod
     def get_definition(cls):
         return getattr(cls, "__definition")
+
+    def serialize(self):
+        instance_dict = {}
+        for attr in self.__class__:
+            instance_dict[attr] = self[attr]
+
+        return instance_dict
