@@ -57,7 +57,7 @@ class Attribute:
     def __validate(self, _type: str, value: Any, definition: Dict[str, Any]) -> None:
         _pytype = self.type_map.get(_type, str)
 
-        if type(value) != _pytype:
+        if value is not None and type(value) != _pytype:
             raise Exception(f"Invalid value ({value}) being set to {self.public_name}")
 
         if _type == "enum" and value not in definition:
