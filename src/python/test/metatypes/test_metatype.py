@@ -103,6 +103,10 @@ class TestMetaType:
         example.name = "another_test"
         assert example.name == "another_test"
 
+        assert hasattr(example, "identifier")
+        example.identifier = 1
+        assert example.identifier == 1
+
     def test_missing_metatype(self):
         definition = {"foo": "bar"}
 

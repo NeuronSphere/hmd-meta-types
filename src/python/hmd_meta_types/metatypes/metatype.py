@@ -100,6 +100,7 @@ class MetaType(type):
                 description=desc,
                 addtl_metadata=metadata,
             )
+            ns["identifier"] = None
             ns["__attributes"].append(key)
 
     @classmethod
