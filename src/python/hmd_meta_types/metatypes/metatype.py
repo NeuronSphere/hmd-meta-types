@@ -45,6 +45,9 @@ class MetaType(type):
                 if attr in kwargs:
                     vars(type(self))[attr].set_value(self, kwargs[attr])
 
+            if "identifier" in kwargs:
+                self.identifier = kwargs["identifier"]
+
         def get_item(self, key):
             return self.__dict__.get(f"__{key}", None)
 

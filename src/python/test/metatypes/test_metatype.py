@@ -93,7 +93,9 @@ class TestMetaType:
         assert klass.__name__ == "ClusterDefinition"
         assert klass.get_type_name() == "cluster_definition"
 
-        example = klass(id="test", name="test", type="exampe", location="local")
+        example = klass(
+            identifier="1", id="test", name="test", type="exampe", location="local"
+        )
 
         assert example["name"] == "test"
         assert example.id == "test"
@@ -104,8 +106,11 @@ class TestMetaType:
         assert example.name == "another_test"
 
         assert hasattr(example, "identifier")
-        example.identifier = 1
-        assert example.identifier == 1
+        assert example.identifier == "1"
+
+        example = klass(id="test", name="test", type="exampe", location="local")
+        assert hasattr(example, "identifier")
+        assert example.identifier is None
 
     def test_missing_metatype(self):
         definition = {"foo": "bar"}
