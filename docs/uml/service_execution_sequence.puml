@@ -1,0 +1,16 @@
+@startuml
+
+HTTP --> "Service Container" : POST /api/noun {"body": {"foo": "bar"}}
+"Service Container" --> "service.execute(evt, ctx)" : {"path": "/api/noun", "method": "POST"}
+"service.execute(evt, ctx)" --> "Handler.execute(evt, ctx)" : {"path": "/api/noun", "method": "POST"}
+"Handler.execute(evt, ctx)" --> "Handler.get_name": "/api/noun"
+"Handler.get_name" --> "Handler.execute(evt, ctx)": "noun"
+"Handler.execute(evt, ctx)" --> "Handler.get_operation" : "/api/noun"
+"Handler.get_operation" --> "Handler.execute(evt, ctx)" : {"fn": fn()}
+"Handler.execute(evt, ctx)" --> "Operation fn" : {"path": "/api/noun", "class_name": "noun", "payload": {"foo": "bar"}}
+"Operation fn" --> "Handler.execute(evt, ctx)" : operation result
+"Handler.execute(evt, ctx)" --> "service.execute(evt, ctx)" : operation result
+"service.execute(evt, ctx)" --> "Service Container" : operation result
+"Service Container" --> HTTP : operation result
+
+@enduml

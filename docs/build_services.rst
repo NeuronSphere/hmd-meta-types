@@ -91,7 +91,7 @@ A basic Service implementation will look as follows:
                 self.operations[fn.__name__] = { "fn": fn, "required":required, **kwds}
 
 
-Usage of above service would look as follows
+Creation of above service in a deployable Docker image would look as follows
 
 .. code-block::
 
