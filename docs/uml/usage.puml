@@ -1,0 +1,23 @@
+@startuml
+
+package ExposingService {
+    [Loader]
+    [Extensions]
+    [Operations]
+    [TypeClass]
+
+    Loader --> TypeClass : builds
+    TypeClass *-- Extensions : composes
+    Loader --> Extensions : applies
+    Extensions *-- Operations : composes
+
+    [ServiceContext]
+    Operations .. ServiceContext : runs in
+}
+
+[ExternalObjects]
+
+ServiceContext <-- ExternalObjects : available in
+ServiceContext <-- Loader : available in 
+
+@enduml
