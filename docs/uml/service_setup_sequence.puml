@@ -2,8 +2,8 @@
 
 Container --> main.py : start
 main.py --> service.run
+service.run --> service.loader.load : load vocab
 service.run --> rest_handler.setup : pass in operations
 service.run --> graphql_handler.setup : pass in operations
-service.run --> service.loader.load : load vocab
 service.run --> Container : ready
 @enduml

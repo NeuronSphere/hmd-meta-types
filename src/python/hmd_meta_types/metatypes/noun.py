@@ -12,7 +12,7 @@ class Noun(metaclass=MetaType):
         return getattr(cls, "__definition")
 
     def serialize(self):
-        instance_dict = {}
+        instance_dict = {"identifier": self.identifier}
         for attr in self.__class__:
             instance_dict[attr] = self[attr]
 
