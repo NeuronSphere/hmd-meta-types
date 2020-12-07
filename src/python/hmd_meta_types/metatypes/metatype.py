@@ -86,6 +86,11 @@ class MetaType(type):
                     ns[key] = Reference(attr["ref"])
                     ns["__attributes"].append(key)
                     continue
+                if _type == "array" and "ref" in attr["definition"]["items"]:
+                    ns[key] = Reference(attr["definition"]["items"]["ref"], True)
+                    ns["__attributes"].append(key)
+                    continue
+
                 desc = attr.get("description", None)
                 definition = attr.get("definition", None)
                 del attr["type"]
@@ -118,7 +123,7 @@ class MetaType(type):
                 return cls.__dict__.get(name, None)
 
         for ext in extensions:
-            if ext.extends == "." or ext.extends == ns["name"]:
+            if ext.extends == "." or ext.extends == ns["__typename"]:
                 ext_cfg = cfg.get(ext.extension_config, {})
                 ns = ext.apply_extension(ns, config=ext_cfg)
             else:
