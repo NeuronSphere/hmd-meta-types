@@ -160,8 +160,8 @@ class TestAttribute:
         assert "Missing key port in attribute attr" in str(e.value)
 
         with pytest.raises(Exception) as e:
-            example.attr = [{"name": "test", "host": "localhost", "port": "3306"}]
-        assert "Invalid value (3306) being set to attr" in str(e.value)
+            example.attr = [{"name": "test", "host": "localhost", "port": "s3306"}]
+        assert "Invalid value (s3306) being set to attr" in str(e.value)
 
         class ExampleObject:
             attr = Attribute(
@@ -183,13 +183,24 @@ class TestAttribute:
                         "type": "integer",
                         "required": True,
                     },
+                    "deep": {"type": "object", "deep1": {"type": "string"}},
                 },
             )
 
         example = ExampleObject()
-        example.attr = {"name": "test", "host": "localhost", "port": 3306}
+        example.attr = {
+            "name": "test",
+            "host": "localhost",
+            "port": 3306,
+            "deep": {"deep1": "hello"},
+        }
 
-        assert example.attr == {"name": "test", "host": "localhost", "port": 3306}
+        assert example.attr == {
+            "name": "test",
+            "host": "localhost",
+            "port": 3306,
+            "deep": {"deep1": "hello"},
+        }
 
         with pytest.raises(Exception) as e:
             example.attr = {"name": "test"}

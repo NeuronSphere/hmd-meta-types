@@ -28,53 +28,6 @@ class TestMetaType:
                     "type": "string",
                 },
                 "location": {"description": "", "required": True, "type": "string"},
-                "source": {"ref": "meta.physical.test"},
-                "targets": {
-                    "type": "array",
-                    "required": True,
-                    "definition": {
-                        "items": {"ref": "meta.physical.cluster_definition"}
-                    },
-                },
-                "state": {
-                    "description": "The current state of the cluster.",
-                    "type": "object",
-                    "definition": {
-                        "status": {
-                            "description": "The current status of the cluster",
-                            "type": "enum",
-                            "required": True,
-                            "definition": ["running", "stopped", "paused"],
-                        },
-                        "services": {
-                            "description": "a collection of services exposed by the cluster",
-                            "type": "array",
-                            "required": True,
-                            "definition": {
-                                "items": {
-                                    "type": "object",
-                                    "definition": {
-                                        "name": {
-                                            "description": "The service name",
-                                            "type": "string",
-                                            "required": True,
-                                        },
-                                        "host": {
-                                            "description": "The hostname on which the service is exposed.",
-                                            "type": "string",
-                                            "required": True,
-                                        },
-                                        "port": {
-                                            "description": "The port on which the service is exposed.",
-                                            "type": "integer",
-                                            "required": True,
-                                        },
-                                    },
-                                }
-                            },
-                        },
-                    },
-                },
             },
         }
         klass = type("cluster_definition", (Example,), {}, definition=definition)
@@ -89,15 +42,7 @@ class TestMetaType:
         assert getattr(klass, "__definition") == definition
 
         assert hasattr(klass, "__attributes")
-        assert getattr(klass, "__attributes") == [
-            "id",
-            "name",
-            "type",
-            "location",
-            "source",
-            "targets",
-            "state",
-        ]
+        assert getattr(klass, "__attributes") == ["id", "name", "type", "location"]
         assert klass.__name__ == "ClusterDefinition"
         assert klass.get_type_name() == "cluster_definition"
 
@@ -105,7 +50,7 @@ class TestMetaType:
             identifier="1", id="test", name="test", type="exampe", location="local"
         )
 
-        assert example["name"] == "test"
+        assert example.name == "test"
         assert example.id == "test"
         example["location"] = "cloud"
         assert example.location == "cloud"

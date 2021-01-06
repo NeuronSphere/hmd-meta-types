@@ -1,7 +1,7 @@
 from typing import Dict, List, Any
 
 from hmd_meta_types.metatypes.metatype import MetaType
-from hmd_meta_types.metatypes import Noun
+from hmd_meta_types.metatypes import Noun, Relationship
 from hmd_meta_types.metatypes.extension import Extension, configuration
 from hmd_meta_types.primitives import Operation
 
@@ -11,8 +11,8 @@ def build_type_class(
     extensions: List[Extension] = list(),
     package_namespace: Dict[str, MetaType] = dict(),
 ) -> MetaType:
-    metatypes = {"noun": Noun}
-    metatype = metatypes.get(definition["metatype"], None)
+    metatypes = {"noun": Noun, "relationship": Relationship}
+    metatype = metatypes.get(definition["metatype"])
     if metatype is None:
         raise Exception(f"Invalid metatype: {definition['metatype']}")
 

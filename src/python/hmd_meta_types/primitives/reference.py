@@ -1,15 +1,9 @@
 class Reference:
-    def __init__(self, class_name: str, is_list: bool = False):
+    def __init__(self, class_name: str):
         self.class_name = class_name
-        self.is_list = is_list
 
     def __get__(self, obj, owner=None):
-        value = getattr(obj, self.private_name, None)
-        if self.is_list and value is None:
-            return []
-        elif self.is_list:
-            return [{"id": value, "reference": self.class_name}]
-        return {"id": value, "reference": self.class_name}
+        return getattr(obj, self.private_name, None)
 
     def __set__(self, obj, value):
         setattr(obj, self.private_name, value)

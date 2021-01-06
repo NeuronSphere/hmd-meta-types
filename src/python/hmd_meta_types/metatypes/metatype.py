@@ -28,9 +28,10 @@ class MetaType(type):
         extension_cfgs = definition.pop("extensions", {})
 
         ns = MetaType.build_initial_namespace(metatype=metatype, definition=definition)
-        attrs = definition.get("attributes", [])
 
-        MetaType.add_attributes(ns, attrs)
+        attrs = definition.get("attributes", [])
+        ns = MetaType.add_attributes(ns, attrs)
+
         ns = MetaType.apply_extensions(ns, extensions=extensions, cfg=extension_cfgs)
 
         def init(self, *args, **kwargs):
@@ -48,6 +49,11 @@ class MetaType(type):
             if "identifier" in kwargs:
                 self.identifier = kwargs["identifier"]
 
+        def equals(self, other):
+            return isinstance(other, self.__class__) and all(
+                self[attr] == other[attr] for attr in getattr(self, "__attributes", [])
+            )
+
         def get_item(self, key):
             return self.__dict__.get(f"__{key}", None)
 
@@ -57,6 +63,7 @@ class MetaType(type):
         ns["__init__"] = init
         ns["__getitem__"] = get_item
         ns["__setitem__"] = set_item
+        ns["__eq__"] = equals
 
         return super().__new__(cls, snake_to_pascal(name), bases, ns)
 
@@ -71,26 +78,27 @@ class MetaType(type):
         ns["__definition"] = definition
         ns["__attributes"] = []
         ns["__required_attributes"] = []
+        if metatype == "relationship":
+            ns["ref_from"] = Reference(definition["ref_from"])
+            ns["ref_to"] = Reference(definition["ref_to"])
+            ns["__required_attributes"].append("ref_from")
+            ns["__attributes"].append("ref_from")
+            ns["__required_attributes"].append("ref_to")
+            ns["__attributes"].append("ref_to")
 
         return ns
 
     @classmethod
-    def add_attributes(metacls, ns: Dict, attrs=list()) -> None:
+    def add_attributes(metacls, ns: Dict, attrs=list()) -> Dict:
         for key, attr in attrs.items():
+            if key in ns:
+                raise Exception(f"Attribute {key} specified multiple times.")
             _type = attr.get("type", "string") if type(attr) == dict else attr
+            required = attr.get("required", False) if type(attr) == dict else False
             desc = None
             definition = None
             metadata = None
             if type(attr) == dict:
-                if "ref" in attr:
-                    ns[key] = Reference(attr["ref"])
-                    ns["__attributes"].append(key)
-                    continue
-                if _type == "array" and "ref" in attr["definition"]["items"]:
-                    ns[key] = Reference(attr["definition"]["items"]["ref"], True)
-                    ns["__attributes"].append(key)
-                    continue
-
                 desc = attr.get("description", None)
                 definition = attr.get("definition", None)
                 del attr["type"]
@@ -104,12 +112,14 @@ class MetaType(type):
             ns[key] = Attribute(
                 _type,
                 definition=definition,
-                required=attr.get("required", False),
+                required=required,
                 description=desc,
                 addtl_metadata=metadata,
             )
-            ns["identifier"] = None
             ns["__attributes"].append(key)
+
+        ns["identifier"] = None
+        return ns
 
     @classmethod
     def apply_extensions(
@@ -137,17 +147,11 @@ class MetaType(type):
     def get_type_name(cls):
         return getattr(cls, "__typename")
 
+    def get_namespace_name(cls):
+        namespace = getattr(cls, "__namespace")
+        typename = getattr(cls, "__typename")
+        return f"{namespace}.{typename}" if namespace else typename
+
     def __iter__(cls):
         cls.i = 0
-        return cls
-
-    def __next__(cls):
-        attrs = getattr(cls, "__attributes", [])
-        attr_len = len(attrs)
-
-        if cls.i >= attr_len:
-            raise StopIteration
-
-        result = attrs[cls.i]
-        cls.i += 1
-        return result
+        return iter(getattr(cls, "__attributes", []))

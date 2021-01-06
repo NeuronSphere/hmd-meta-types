@@ -31,7 +31,7 @@ class TestExtensions:
 
         assert "run_op" in getattr(OpExt, "_operations")
 
-    def test_metatype_registration(self, example_definition):
+    def test_metatype_registration(self, cluster_definition):
         @Extension("test")
         class OpExt:
             @operation
@@ -46,7 +46,7 @@ class TestExtensions:
                 return "no op"
 
         klass = MetaType(
-            "example", (Noun,), {}, definition=example_definition, extensions=[OpExt]
+            "example", (Noun,), {}, definition=cluster_definition, extensions=[OpExt]
         )
 
         assert "run_op" in klass.list_operations()
@@ -54,7 +54,7 @@ class TestExtensions:
         assert "no_op" not in klass.list_operations()
         assert "no_op" in vars(klass)
 
-        example = klass(id="test", name="test", type="example", location="local")
+        example = klass(id=1, name="test", type="example", location="a")
         assert example.run_op() == "op"
 
         assert example.diff_op() == "diff"
@@ -62,7 +62,7 @@ class TestExtensions:
         op = klass.get_operation("run_op")
         assert op is not None
 
-    def test_specific_type_extension(self, example_definition):
+    def test_specific_type_extension(self, cluster_definition):
         @Extension("test", type_name="test")
         class OpExt:
             @operation
@@ -77,7 +77,7 @@ class TestExtensions:
                 return "no op"
 
         klass = MetaType(
-            "example", (Noun,), {}, definition=example_definition, extensions=[OpExt]
+            "example", (Noun,), {}, definition=cluster_definition, extensions=[OpExt]
         )
 
         assert "run_op" not in klass.list_operations()
@@ -85,7 +85,7 @@ class TestExtensions:
         assert "no_op" not in klass.list_operations()
         assert "no_op" not in vars(klass)
 
-    def test_extension_configuration(self, example_definition):
+    def test_extension_configuration(self, cluster_definition):
         @Extension("test")
         class OpExt:
             @configuration
@@ -107,12 +107,12 @@ class TestExtensions:
             def no_op():
                 return "no op"
 
-        example_definition["extensions"] = {"test": {"diff_op": False}}
+        cluster_definition["extensions"] = {"test": {"diff_op": False}}
         klass = MetaType(
-            "example", (Noun,), {}, definition=example_definition, extensions=[OpExt]
+            "example", (Noun,), {}, definition=cluster_definition, extensions=[OpExt]
         )
 
-        example = klass(id="test", name="test", type="example", location="local")
+        example = klass(id=1, name="test", type="example", location="a")
         assert example.run_op() == "op"
 
         op = klass.get_operation("diff_op")

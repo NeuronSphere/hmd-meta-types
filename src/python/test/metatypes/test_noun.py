@@ -3,26 +3,27 @@ import pytest
 from hmd_meta_types.metatypes.noun import Noun
 from hmd_meta_types.metatypes.metatype import MetaType
 from hmd_meta_types.primitives.attribute import Attribute
+from hmd_meta_types.hmd_meta_types import build_type_class
 
 
 @pytest.fixture()
-def example_class(example_definition):
-    definition = example_definition
+def example_class(cluster_definition):
+    definition = cluster_definition
 
-    Example = MetaType("cluster_definition", (Noun,), {}, definition=definition)
+    Example = build_type_class(definition)
     return Example
 
 
 @pytest.fixture()
 def example(example_class):
 
-    return example_class(id="test", name="test", type="example", location="local")
+    return example_class(id=1, name="test", type="example", location="a")
 
 
 class TestNoun:
     def test_init(self, example):
         assert example["name"] == "test"
-        assert example.id == "test"
+        assert example.id == 1
 
         example.name = "another_test"
         assert example.name == "another_test"
@@ -36,7 +37,7 @@ class TestNoun:
         assert next(ex_iter) == "location"
 
         with pytest.raises(StopIteration):
-            for i in ex_iter:
+            for _ in ex_iter:
                 pass
             next(ex_iter)
 
@@ -50,8 +51,8 @@ class TestNoun:
         }
         assert attr.get_type() == "string"
 
-    def test_get_definition(self, example_class, example_definition):
-        assert example_class.get_definition() == example_definition
+    def test_get_definition(self, example_class, cluster_definition):
+        assert example_class.get_definition() == cluster_definition
 
     def test_serialize(self, example):
         example_dict = example.serialize()

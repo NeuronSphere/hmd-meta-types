@@ -16,4 +16,4 @@ class TestReference:
         example = Example()
         example.ref = "test"
 
-        assert example.ref == {"id": "test", "reference": "test.class"}
+        assert example.ref == "test"
