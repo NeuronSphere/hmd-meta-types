@@ -35,8 +35,8 @@ def relationship(cluster_definition_rel):
 
 @pytest.fixture()
 def relationship_instance(relationship, parent_instance, child_instance):
-    parent_instance.identifier = "parent"
-    child_instance.identifier = "child"
+    parent_instance.identifier = 1
+    child_instance.identifier = 2
     return relationship(
         ref_from=parent_instance,
         ref_to=child_instance,
@@ -61,12 +61,6 @@ class TestRelationship:
             "id": 1,
             "type": "rel_type",
             "location": "a",
-            "ref_from": {
-                "class_name": "meta.physical.cluster_definition",
-                "identifier": "parent",
-            },
-            "ref_to": {
-                "class_name": "meta.physical.sub_definition",
-                "identifier": "child",
-            },
+            "ref_from": 1,
+            "ref_to": 2,
         }

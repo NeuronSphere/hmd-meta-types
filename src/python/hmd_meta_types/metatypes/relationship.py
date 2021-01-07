@@ -20,18 +20,18 @@ class Relationship(metaclass=MetaType):
             return None
 
     def serialize(self):
-        instance_dict = {"identifier": self.identifier}
-        instance_dict["ref_from"] = {
-            "identifier": self.get_ref_id(self["ref_from"]),
-            "class_name": self.get_attribute("ref_from").class_name,
-        }
-        instance_dict["ref_to"] = {
-            "identifier": self.get_ref_id(self["ref_to"]),
-            "class_name": self.get_attribute("ref_to").class_name,
-        }
+        instance_dict = {"identifier": self.identifier}  # pylint: disable=no-member
+        instance_dict["ref_to"] = self.get_ref_id(
+            self["ref_to"]
+        )  # pylint: disable=unsubscriptable-object
+        instance_dict["ref_from"] = self.get_ref_id(
+            self["ref_from"]
+        )  # pylint: disable=unsubscriptable-object
 
         for attr in self.__class__:
             if attr not in ["ref_from", "ref_to"]:
-                instance_dict[attr] = self[attr]
+                instance_dict[attr] = self[
+                    attr
+                ]  # pylint: disable=unsubscriptable-object
 
         return instance_dict
