@@ -21,17 +21,17 @@ class Relationship(metaclass=MetaType):
 
     def serialize(self):
         instance_dict = {"identifier": self.identifier}  # pylint: disable=no-member
-        instance_dict["ref_to"] = self.get_ref_id(
-            self["ref_to"]
-        )  # pylint: disable=unsubscriptable-object
-        instance_dict["ref_from"] = self.get_ref_id(
-            self["ref_from"]
-        )  # pylint: disable=unsubscriptable-object
+        instance_dict["ref_to"] = self[
+            "ref_to"
+        ].serialize()  # pylint: disable=unsubscriptable-object
+        instance_dict["ref_from"] = self[
+            "ref_from"
+        ].serialize()  # pylint: disable=unsubscriptable-object
 
         for attr in self.__class__:
             if attr not in ["ref_from", "ref_to"]:
-                instance_dict[attr] = self[
+                instance_dict[attr] = self[  # pylint: disable=unsubscriptable-object
                     attr
-                ]  # pylint: disable=unsubscriptable-object
+                ]
 
         return instance_dict

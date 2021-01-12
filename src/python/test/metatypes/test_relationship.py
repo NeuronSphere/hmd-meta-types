@@ -61,6 +61,6 @@ class TestRelationship:
             "id": 1,
             "type": "rel_type",
             "location": "a",
-            "ref_from": 1,
-            "ref_to": 2,
+            "ref_from": relationship_instance.ref_from.serialize(),
+            "ref_to": relationship_instance.ref_to.serialize(),
         }
