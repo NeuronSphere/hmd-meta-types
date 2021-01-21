@@ -1,4 +1,3 @@
-from typing import Type
 from abc import abstractmethod
 
 from .entity import Entity
@@ -6,41 +5,41 @@ from .noun import Noun
 
 
 class Relationship(Entity):
-    def __init__(self, from_ref: Noun, to_ref: Noun, **kwargs):
-        self._from_ref = from_ref
-        self._to_ref = to_ref
+    def __init__(self, ref_from: Noun, ref_to: Noun, **kwargs):
+        self._ref_from = ref_from
+        self._ref_to = ref_to
         super().__init__(**kwargs)
 
     @property
     @abstractmethod
-    def from_ref_type(self):
+    def ref_from_type(self):
         pass
 
     @property
     @abstractmethod
-    def to_ref_type(self):
+    def ref_to_type(self):
         pass
 
     @property
-    def from_ref(self):
-        return self._from_ref
+    def ref_from(self):
+        return self._ref_from
 
-    @from_ref.setter
-    def from_ref(self, value):
-        if not isinstance(value, self.from_ref_type):
+    @ref_from.setter
+    def ref_from(self, value):
+        if not isinstance(value, self.ref_from_type):
             raise Exception(
-                f"From reference must be of type {self.from_ref_type.__name__}."
+                f"From reference must be of type {self.ref_from_type.__name__}."
             )
-        self._from_ref = value
+        self._ref_from = value
 
     @property
-    def to_ref(self):
-        return self._to_ref
+    def ref_to(self):
+        return self._ref_to
 
-    @to_ref.setter
-    def to_ref(self, value):
-        if not isinstance(value, self.to_ref_type):
+    @ref_to.setter
+    def ref_to(self, value):
+        if not isinstance(value, self.ref_to_type):
             raise Exception(
-                f"To reference must be of type {self.to_ref_type.__name__}."
+                f"To reference must be of type {self.ref_to_type.__name__}."
             )
-        self._from_ref = value
+        self._ref_from = value

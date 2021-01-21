@@ -73,11 +73,11 @@ def arel(anoun):
             return self.__class__._entity_def
 
         @property
-        def from_ref_type(self):
+        def ref_from_type(self):
             return anoun
 
         @property
-        def to_ref_type(self):
+        def ref_to_type(self):
             return anoun
 
         @property

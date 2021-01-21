@@ -1,4 +1,3 @@
-from typing import Type
 from .entity import Entity
 
 

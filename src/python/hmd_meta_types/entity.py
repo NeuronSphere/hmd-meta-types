@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 import functools
-from typing import Type
 
 type_mapping = {"integer": int, "string": str, "float": float, "enum": str}
 
