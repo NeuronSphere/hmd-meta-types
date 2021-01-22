@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import functools
 
+
 type_mapping = {"integer": int, "string": str, "float": float, "enum": str}
 
 
@@ -62,7 +63,10 @@ class Entity(ABC):
 
     @property
     def identifier(self):
-        return self._identifier
+        if hasattr(self, "_identifier"):
+            return self._identifier
+        else:
+            return None
 
     @identifier.setter
     def identifier(self, value):
@@ -76,3 +80,37 @@ class Entity(ABC):
     @abstractmethod
     def entity_definition():
         pass
+
+    @staticmethod
+    def get_namespace_name(entity_definition):
+        name = entity_definition["name"]
+        namespace = entity_definition["namespace"]
+        return ((namespace + ".") if namespace else "") + name
+
+    def serialize(self):
+        entity_definition = self.__class__.entity_definition()
+        result = {"identifier": self.identifier}
+        for attr, val in entity_definition.get("attributes", {}).items():
+            result[attr] = getattr(self, attr)
+
+        if hasattr(self, "ref_to"):
+            result["ref_to"] = self.ref_to.serialize()
+
+        if hasattr(self, "ref_from"):
+            result["ref_from"] = self.ref_from.serialize()
+
+        return result
+
+    def __eq__(self, other):
+        entity_def = self.__class__.entity_definition()
+        attributes_to_compare = ["identifier"]
+        if hasattr(self, "ref_to"):
+            attributes_to_compare += ["ref_from", "ref_to"]
+        attributes_to_compare += [
+            name for name, _ in entity_def.get("attributes", {}).items()
+        ]
+
+        return isinstance(other, self.__class__) and all(
+            getattr(self, attr) == getattr(other, attr)
+            for attr in attributes_to_compare
+        )

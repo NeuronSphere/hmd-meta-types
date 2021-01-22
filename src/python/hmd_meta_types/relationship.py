@@ -6,8 +6,8 @@ from .noun import Noun
 
 class Relationship(Entity):
     def __init__(self, ref_from: Noun, ref_to: Noun, **kwargs):
-        self._ref_from = ref_from
-        self._ref_to = ref_to
+        self.ref_from = ref_from
+        self.ref_to = ref_to
         super().__init__(**kwargs)
 
     @staticmethod
@@ -42,4 +42,4 @@ class Relationship(Entity):
             raise Exception(
                 f"To reference must be of type {self.__class__.ref_to_type().__name__}."
             )
-        self._ref_from = value
+        self._ref_to = value

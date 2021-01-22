@@ -5,6 +5,9 @@ from hmd_meta_types.entity import Entity, type_check
 
 
 class TestNoun:
+    def test_namespace_name(self, anoun):
+        assert anoun.get_namespace_name() == "name.space.a_noun"
+
     def test_okay(self, anoun):
         noun1 = anoun(**{"field1": "hello", "field2": 5, "field3": "b"})
         assert noun1.field1 == "hello"

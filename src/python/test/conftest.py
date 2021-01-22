@@ -2,19 +2,20 @@ import json
 import pytest
 
 from hmd_meta_types.entity import type_check
-from hmd_meta_types.noun import Noun
-from hmd_meta_types.relationship import Relationship
+from hmd_meta_types import Noun, Relationship, Entity
 
 
 @pytest.fixture()
 def anoun():
     class ANoun(Noun):
         _entity_def = {
+            "name": "a_noun",
+            "namespace": "name.space",
             "attributes": {
                 "field1": {"type": "string", "required": True},
                 "field2": {"type": "integer"},
                 "field3": {"type": "enum", "enum_def": ["a", "b"]},
-            }
+            },
         }
 
         def __init__(self, **kwargs):
@@ -23,6 +24,10 @@ def anoun():
         @staticmethod
         def entity_definition():
             return ANoun._entity_def
+
+        @staticmethod
+        def get_namespace_name():
+            return Entity.get_namespace_name(ANoun._entity_def)
 
         @property
         def field1(self):
@@ -71,6 +76,10 @@ def arel(anoun):
         @staticmethod
         def entity_definition():
             return ARel._entity_def
+
+        @staticmethod
+        def get_namespace_name():
+            return Entity.get_namespace_name(ARel._entity_def)
 
         @staticmethod
         def ref_from_type():
