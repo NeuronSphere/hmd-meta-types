@@ -10,14 +10,14 @@ class Relationship(Entity):
         self._ref_to = ref_to
         super().__init__(**kwargs)
 
-    @property
+    @staticmethod
     @abstractmethod
-    def ref_from_type(self):
+    def ref_from_type():
         pass
 
-    @property
+    @staticmethod
     @abstractmethod
-    def ref_to_type(self):
+    def ref_to_type():
         pass
 
     @property
@@ -26,9 +26,9 @@ class Relationship(Entity):
 
     @ref_from.setter
     def ref_from(self, value):
-        if not isinstance(value, self.ref_from_type):
+        if not isinstance(value, self.__class__.ref_from_type()):
             raise Exception(
-                f"From reference must be of type {self.ref_from_type.__name__}."
+                f"From reference must be of type {self.__class__.ref_from_type().__name__}."
             )
         self._ref_from = value
 
@@ -38,8 +38,8 @@ class Relationship(Entity):
 
     @ref_to.setter
     def ref_to(self, value):
-        if not isinstance(value, self.ref_to_type):
+        if not isinstance(value, self.__class__.ref_to_type()):
             raise Exception(
-                f"To reference must be of type {self.ref_to_type.__name__}."
+                f"To reference must be of type {self.__class__.ref_to_type().__name__}."
             )
         self._ref_from = value

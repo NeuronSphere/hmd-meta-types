@@ -20,9 +20,9 @@ def anoun():
         def __init__(self, **kwargs):
             super().__init__(**kwargs)
 
-        @property
-        def entity_definition(self):
-            return self.__class__._entity_def
+        @staticmethod
+        def entity_definition():
+            return ANoun._entity_def
 
         @property
         def field1(self):
@@ -68,16 +68,16 @@ def arel(anoun):
         def __init__(self, **kwargs):
             super().__init__(**kwargs)
 
-        @property
-        def entity_definition(self):
-            return self.__class__._entity_def
+        @staticmethod
+        def entity_definition():
+            return ARel._entity_def
 
-        @property
-        def ref_from_type(self):
+        @staticmethod
+        def ref_from_type():
             return anoun
 
-        @property
-        def ref_to_type(self):
+        @staticmethod
+        def ref_to_type():
             return anoun
 
         @property

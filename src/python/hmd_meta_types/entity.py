@@ -31,18 +31,20 @@ def type_check(field_name: str, field_definition: dict):
 class Entity(ABC):
     def __init__(self, **kwargs):
 
-        entity_definition = self.entity_definition
+        entity_definition = self.__class__.entity_definition()
         defined_fields = set(entity_definition["attributes"].keys())
         required_fields = set(
             [
                 attr_name[0]
                 for attr_name in filter(
-                    lambda item: item[1].get("required") == True,
+                    lambda item: item[1].get("required"),
                     entity_definition["attributes"].items(),
                 )
             ]
         )
         fields_present = set(kwargs.keys())
+        if "identifier" in fields_present:
+            fields_present.remove("identifier")
 
         # see if all required fields are present...
         required_fields_present = required_fields.intersection(fields_present)
@@ -59,10 +61,18 @@ class Entity(ABC):
             setattr(self, field, kwargs[field])
 
     @property
+    def identifier(self):
+        return self._identifier
+
+    @identifier.setter
+    def identifier(self, value):
+        self._identifier = value
+
+    @property
     def instance_type(self):
         return self.__class__
 
-    @property
+    @staticmethod
     @abstractmethod
-    def entity_definition(self):
+    def entity_definition():
         pass
