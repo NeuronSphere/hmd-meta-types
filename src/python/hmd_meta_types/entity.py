@@ -13,15 +13,19 @@ def type_check(field_name: str, field_definition: dict):
                 raise Exception(
                     f"Unexpected number of arguments in setter: {len(args)}"
                 )
-            if field_definition["type"] == "enum":
-                if args[1] not in field_definition["enum_def"]:
-                    raise Exception(
-                        f"For field, {field_name}, expected one of {field_definition['enum_def']}, was \"{args[1]}\""
+            if field_definition.get("required", False):
+                if args[1] is None:
+                    raise Exception(f"Cannot set required fied, {field_name}, to None.")
+            if args[1] is not None:
+                if field_definition["type"] == "enum":
+                    if args[1] not in field_definition["enum_def"]:
+                        raise Exception(
+                            f"For field, {field_name}, expected one of {field_definition['enum_def']}, was \"{args[1]}\""
+                        )
+                elif not isinstance(args[1], type_mapping[field_definition["type"]]):
+                    raise TypeError(
+                        f"For field, {field_name}, expected value of type, \"{type_mapping[field_definition['type']].__name__}\", was \"{type(args[1]).__name__}\""
                     )
-            elif not isinstance(args[1], type_mapping[field_definition["type"]]):
-                raise TypeError(
-                    f"For field, {field_name}, expected value of type, \"{type_mapping[field_definition['type']].__name__}\", was \"{type(args[1]).__name__}\""
-                )
             setter(*args, **kwargs)
 
         return type_check_wrapper
