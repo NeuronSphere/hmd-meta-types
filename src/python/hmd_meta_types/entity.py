@@ -118,3 +118,8 @@ class Entity(ABC):
             getattr(self, attr) == getattr(other, attr)
             for attr in attributes_to_compare
         )
+
+    def __hash__(self):
+        if self.identifier is None:
+            raise Exception("Entities must have an identifier to be hashable.")
+        return hash(self.identifier)
