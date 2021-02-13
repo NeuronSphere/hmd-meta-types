@@ -1,8 +1,5 @@
 import pytest
 
-from hmd_meta_types.noun import Noun
-from hmd_meta_types.entity import Entity, type_check
-
 
 class TestNoun:
     def test_namespace_name(self, anoun):

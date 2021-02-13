@@ -1,8 +1,5 @@
 import pytest
 
-from hmd_meta_types.relationship import Relationship
-from hmd_meta_types.entity import Entity, type_check
-
 
 class TestRel:
     def test_okay(self, arel, anoun):
