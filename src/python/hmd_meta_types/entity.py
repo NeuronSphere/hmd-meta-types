@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import functools
+from collections import defaultdict
 
 
 type_mapping = {"integer": int, "string": str, "float": float, "enum": str}
@@ -123,3 +124,54 @@ class Entity(ABC):
         if self.identifier is None:
             raise Exception("Entities must have an identifier to be hashable.")
         return hash(self.identifier)
+
+
+class Noun(Entity):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        # relationships for which this is the "to" noun
+        self.to_rels = defaultdict(list)  # type: Dict[str, List[Relationship]]
+        # relationships for which this is the "from" noun
+        self.from_rels = defaultdict(list)  # type: Dict[str, List[Relationship]]
+
+
+class Relationship(Entity):
+    def __init__(self, ref_from: Noun, ref_to: Noun, **kwargs):
+        self.ref_from = ref_from
+        self.ref_to = ref_to
+        super().__init__(**kwargs)
+
+    @staticmethod
+    @abstractmethod
+    def ref_from_type():
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def ref_to_type():
+        pass
+
+    @property
+    def ref_from(self):
+        return self._ref_from
+
+    @ref_from.setter
+    def ref_from(self, value):
+        if not isinstance(value, self.__class__.ref_from_type()):
+            raise Exception(
+                f"From reference must be of type {self.__class__.ref_from_type().__name__}."
+            )
+        self._ref_from = value
+
+    @property
+    def ref_to(self):
+        return self._ref_to
+
+    @ref_to.setter
+    def ref_to(self, value):
+        if not isinstance(value, self.__class__.ref_to_type()):
+            raise Exception(
+                f"To reference must be of type {self.__class__.ref_to_type().__name__}."
+            )
+        self._ref_to = value
