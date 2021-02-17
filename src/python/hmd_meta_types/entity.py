@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import functools
 from collections import defaultdict
-
+from typing import Dict, Type
 
 type_mapping = {"integer": int, "string": str, "float": float, "enum": str}
 
@@ -67,14 +67,14 @@ class Entity(ABC):
             setattr(self, field, kwargs[field])
 
     @property
-    def identifier(self):
+    def identifier(self) -> int:
         if hasattr(self, "_identifier"):
             return self._identifier
         else:
             return None
 
     @identifier.setter
-    def identifier(self, value):
+    def identifier(self, value: int):
         self._identifier = value
 
     @property
@@ -87,12 +87,12 @@ class Entity(ABC):
         pass
 
     @staticmethod
-    def get_namespace_name(entity_definition):
+    def get_namespace_name(entity_definition) -> str:
         name = entity_definition["name"]
         namespace = entity_definition["namespace"]
         return ((namespace + ".") if namespace else "") + name
 
-    def serialize(self):
+    def serialize(self) -> Dict:
         entity_definition = self.__class__.entity_definition()
         result = {"identifier": self.identifier}
         for attr, val in entity_definition.get("attributes", {}).items():
@@ -144,20 +144,20 @@ class Relationship(Entity):
 
     @staticmethod
     @abstractmethod
-    def ref_from_type():
+    def ref_from_type() -> Type[Noun]:
         pass
 
     @staticmethod
     @abstractmethod
-    def ref_to_type():
+    def ref_to_type() -> Type[Noun]:
         pass
 
     @property
-    def ref_from(self):
+    def ref_from(self) -> Noun:
         return self._ref_from
 
     @ref_from.setter
-    def ref_from(self, value):
+    def ref_from(self, value: Noun):
         if not isinstance(value, self.__class__.ref_from_type()):
             raise Exception(
                 f"From reference must be of type {self.__class__.ref_from_type().__name__}."
@@ -165,11 +165,11 @@ class Relationship(Entity):
         self._ref_from = value
 
     @property
-    def ref_to(self):
+    def ref_to(self) -> Noun:
         return self._ref_to
 
     @ref_to.setter
-    def ref_to(self, value):
+    def ref_to(self, value: Noun):
         if not isinstance(value, self.__class__.ref_to_type()):
             raise Exception(
                 f"To reference must be of type {self.__class__.ref_to_type().__name__}."
