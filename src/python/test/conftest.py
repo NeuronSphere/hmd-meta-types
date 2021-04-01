@@ -15,6 +15,7 @@ def anoun():
                 "field1": {"type": "string", "required": True},
                 "field2": {"type": "integer"},
                 "field3": {"type": "enum", "enum_def": ["a", "b"]},
+                "timestampfield": {"type": "timestamp"},
             },
         }
 
@@ -55,6 +56,15 @@ def anoun():
         @type_check("field3", _entity_def["attributes"]["field3"])
         def field3(self, value):
             self._field3 = value
+
+        @property
+        def timestampfield(self):
+            return self._timestampfield
+
+        @timestampfield.setter
+        @type_check("timestampfield", _entity_def["attributes"]["timestampfield"])
+        def timestampfield(self, value):
+            self._timestampfield = value
 
     return ANoun
 
