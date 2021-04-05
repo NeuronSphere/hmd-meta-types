@@ -2,8 +2,17 @@ from abc import ABC, abstractmethod
 import functools
 from collections import defaultdict
 from typing import Dict, Type
+from datetime import date, time, datetime, timezone
+from dateutil.parser import isoparse
 
-type_mapping = {"integer": int, "string": str, "float": float, "enum": str}
+type_mapping = {
+    "integer": [int],
+    "string": [str],
+    "float": [float],
+    "enum": [str],
+    "timestamp": [datetime, str],
+    "epoch": [int],
+}
 
 
 def type_check(field_name: str, field_definition: dict):
@@ -23,15 +32,41 @@ def type_check(field_name: str, field_definition: dict):
                         raise Exception(
                             f"For field, {field_name}, expected one of {field_definition['enum_def']}, was \"{args[1]}\""
                         )
-                elif not isinstance(args[1], type_mapping[field_definition["type"]]):
+                elif not any(
+                    isinstance(args[1], a_type)
+                    for a_type in (type_mapping[field_definition["type"]])
+                ):
+                    valid_types = [
+                        f'"{a_type.__name__}"'
+                        for a_type in type_mapping[field_definition["type"]]
+                    ]
                     raise TypeError(
-                        f"For field, {field_name}, expected value of type, \"{type_mapping[field_definition['type']].__name__}\", was \"{type(args[1]).__name__}\""
+                        f"For field, {field_name}, expected a value of one of the types: {', '.join(valid_types)}, was \"{type(args[1]).__name__}\""
                     )
-            setter(*args, **kwargs)
+
+            setter(
+                *[args[0], get_value(field_name, field_definition, args[1])], **kwargs
+            )
 
         return type_check_wrapper
 
     return type_check_decorator
+
+
+def get_value(field_name: str, field_def: Dict, value):
+    result = value
+    try:
+        if field_def["type"] == "timestamp":
+            if isinstance(value, str):
+                result = isoparse(value)
+            if result and result.tzinfo and result.tzinfo.utcoffset(result):
+                # we have a timzone aware object. make sure its in utc...
+                result = result.astimezone(timezone.utc)
+    except ValueError as e:
+        raise ValueError(
+            f'Invalid value for field, "{field_name}": {value}. Error: {str(e)}'
+        )
+    return result
 
 
 class Entity(ABC):
@@ -94,9 +129,15 @@ class Entity(ABC):
 
     def serialize(self) -> Dict:
         entity_definition = self.__class__.entity_definition()
-        result = {"identifier": self.identifier}
-        for attr, val in entity_definition.get("attributes", {}).items():
-            result[attr] = getattr(self, attr)
+        result = {}
+        if self.identifier:
+            result["identifier"] = self.identifier
+        for attr, definition in entity_definition.get("attributes", {}).items():
+            value = getattr(self, attr)
+            if value is not None:
+                if isinstance(value, datetime):
+                    value = value.isoformat(timespec="milliseconds")
+                result[attr] = value
 
         if hasattr(self, "ref_to"):
             result["ref_to"] = self.ref_to.serialize()
