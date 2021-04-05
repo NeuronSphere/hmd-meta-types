@@ -59,7 +59,7 @@ def get_value(field_name: str, field_def: Dict, value):
         if field_def["type"] == "timestamp":
             if isinstance(value, str):
                 result = isoparse(value)
-            if result.tzinfo and result.tzinfo.utcoffset(result):
+            if result and result.tzinfo and result.tzinfo.utcoffset(result):
                 # we have a timzone aware object. make sure its in utc...
                 result = result.astimezone(timezone.utc)
     except ValueError as e:
@@ -133,8 +133,8 @@ class Entity(ABC):
         if self.identifier:
             result["identifier"] = self.identifier
         for attr, definition in entity_definition.get("attributes", {}).items():
-            if hasattr(self, attr):
-                value = getattr(self, attr)
+            value = getattr(self, attr)
+            if value is not None:
                 if isinstance(value, datetime):
                     value = value.isoformat(timespec="milliseconds")
                 result[attr] = value
