@@ -100,7 +100,7 @@ class Entity(ABC):
 
     @property
     def identifier(self) -> str:
-        self._getter("identifier")
+        return self._getter("identifier")
 
     @identifier.setter
     def identifier(self, value: str):
