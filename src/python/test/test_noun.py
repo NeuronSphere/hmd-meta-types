@@ -95,7 +95,7 @@ class TestNoun:
         }
 
         # a datetime in the local timezone
-        a_datetime = datetime.now().astimezone(timezone(timedelta(hour=5)))
+        a_datetime = datetime.now().astimezone(timezone(timedelta(hours=5)))
         noun1.timestampfield = a_datetime
 
         # confirm the offset from utc is non-zero
