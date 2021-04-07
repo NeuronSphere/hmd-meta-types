@@ -1,71 +1,33 @@
 from abc import ABC, abstractmethod
 import functools
 from collections import defaultdict
-from typing import Dict, Type
-from datetime import date, time, datetime, timezone
+from typing import Dict, Type, Any
+from datetime import datetime, timezone
 from dateutil.parser import isoparse
+from json import dumps, loads
+from base64 import b64encode, b64decode
+from copy import deepcopy
 
 type_mapping = {
     "integer": [int],
     "string": [str],
     "float": [float],
     "enum": [str],
-    "timestamp": [datetime, str],
+    "timestamp": [datetime],
     "epoch": [int],
+    "collection": [list],
+    "mapping": [dict],
+    "blob": [bytes],
 }
 
 
-def type_check(field_name: str, field_definition: dict):
-    def type_check_decorator(setter):
-        @functools.wraps(setter)
-        def type_check_wrapper(*args, **kwargs):
-            if len(args) != 2:
-                raise Exception(
-                    f"Unexpected number of arguments in setter: {len(args)}"
-                )
-            if field_definition.get("required", False):
-                if args[1] is None:
-                    raise Exception(f"Cannot set required fied, {field_name}, to None.")
-            if args[1] is not None:
-                if field_definition["type"] == "enum":
-                    if args[1] not in field_definition["enum_def"]:
-                        raise Exception(
-                            f"For field, {field_name}, expected one of {field_definition['enum_def']}, was \"{args[1]}\""
-                        )
-                elif not any(
-                    isinstance(args[1], a_type)
-                    for a_type in (type_mapping[field_definition["type"]])
-                ):
-                    valid_types = [
-                        f'"{a_type.__name__}"'
-                        for a_type in type_mapping[field_definition["type"]]
-                    ]
-                    raise TypeError(
-                        f"For field, {field_name}, expected a value of one of the types: {', '.join(valid_types)}, was \"{type(args[1]).__name__}\""
-                    )
-
-            setter(
-                *[args[0], get_value(field_name, field_definition, args[1])], **kwargs
-            )
-
-        return type_check_wrapper
-
-    return type_check_decorator
-
-
-def get_value(field_name: str, field_def: Dict, value):
+def get_value(field_def: Dict, value: Any):
     result = value
-    try:
-        if field_def["type"] == "timestamp":
-            if isinstance(value, str):
-                result = isoparse(value)
-            if result and result.tzinfo and result.tzinfo.utcoffset(result):
-                # we have a timzone aware object. make sure its in utc...
-                result = result.astimezone(timezone.utc)
-    except ValueError as e:
-        raise ValueError(
-            f'Invalid value for field, "{field_name}": {value}. Error: {str(e)}'
-        )
+    if field_def["type"] == "timestamp":
+        if result and result.tzinfo and result.tzinfo.utcoffset(result):
+            # we have a timzone aware object. make sure its in utc...
+            result = result.astimezone(timezone.utc)
+
     return result
 
 
@@ -101,16 +63,48 @@ class Entity(ABC):
         for field in kwargs:
             setattr(self, field, kwargs[field])
 
-    @property
-    def identifier(self) -> int:
-        if hasattr(self, "_identifier"):
-            return self._identifier
-        else:
+    def _setter(self, field_name, value):
+        field_definition = self.entity_definition()["attributes"].get(field_name)
+        if field_definition:
+            if field_definition.get("required", False):
+                if value is None:
+                    raise Exception(
+                        f"Cannot set required field, {field_name}, to None."
+                    )
+            if value is not None:
+                if field_definition["type"] == "enum":
+                    if value not in field_definition["enum_def"]:
+                        raise Exception(
+                            f"For field, {field_name}, expected one of {field_definition['enum_def']}, was \"{value}\""
+                        )
+                elif not any(
+                    isinstance(value, a_type)
+                    for a_type in (type_mapping[field_definition["type"]])
+                ):
+                    valid_types = [
+                        f'"{a_type.__name__}"'
+                        for a_type in type_mapping[field_definition["type"]]
+                    ]
+                    raise TypeError(
+                        f"For field, {field_name}, expected a value of one of the types: {', '.join(valid_types)}, was \"{type(value).__name__}\""
+                    )
+                value = get_value(field_definition, value)
+
+        setattr(self, f"_{field_name}", value)
+
+    def _getter(self, attribute_name):
+        if not hasattr(self, f"_{attribute_name}"):
             return None
+        else:
+            return getattr(self, f"_{attribute_name}")
+
+    @property
+    def identifier(self) -> str:
+        self._getter("identifier")
 
     @identifier.setter
-    def identifier(self, value: int):
-        self._identifier = value
+    def identifier(self, value: str):
+        self._setter("identifier", value)
 
     @property
     def instance_type(self):
@@ -136,7 +130,13 @@ class Entity(ABC):
             value = getattr(self, attr)
             if value is not None:
                 if isinstance(value, datetime):
-                    value = value.isoformat(timespec="milliseconds")
+                    value = value.isoformat()
+                elif definition["type"] in ["collection", "mapping"]:
+                    value = b64encode(dumps(value).encode(encoding="utf-8")).decode(
+                        "utf-8"
+                    )
+                elif definition["type"] == "blob":
+                    value = b64encode(value).decode("utf-8")
                 result[attr] = value
 
         if hasattr(self, "ref_to"):
@@ -146,6 +146,33 @@ class Entity(ABC):
             result["ref_from"] = self.ref_from.serialize()
 
         return result
+
+    @classmethod
+    def deserialize(cls, entity_type, data: dict):
+        entity_def = entity_type.entity_definition()
+        new_data = deepcopy(data)
+        for attr, field_def in entity_def.get("attributes", {}).items():
+            if attr in new_data:
+                result = new_data[attr]
+                if result:
+                    if field_def["type"] == "timestamp":
+                        result = isoparse(result)
+                    elif field_def["type"] in ["mapping", "collection"]:
+                        result = loads(
+                            b64decode(result.encode(encoding="utf-8")).decode("utf-8")
+                        )
+                    elif field_def["type"] == "blob":
+                        result = b64decode(result.encode(encoding="utf-8"))
+                new_data[attr] = result
+        if issubclass(entity_type, Relationship):
+            new_data["ref_to"] = Entity.deserialize(
+                entity_type.ref_to_type(), new_data["ref_to"]
+            )
+            new_data["ref_from"] = Entity.deserialize(
+                entity_type.ref_from_type(), new_data["ref_from"]
+            )
+
+        return entity_type(**new_data)
 
     def __eq__(self, other):
         entity_def = self.__class__.entity_definition()

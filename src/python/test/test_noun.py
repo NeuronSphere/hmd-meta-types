@@ -2,7 +2,10 @@ from datetime import date, time, datetime, timezone, timedelta
 
 import re
 import pytest
+from json import dumps
+from base64 import b64encode, b64decode
 from dateutil.parser import isoparse
+from hmd_meta_types import Entity
 
 
 class TestNoun:
@@ -11,27 +14,40 @@ class TestNoun:
 
     def test_okay(self, anoun):
         datetime_value = datetime.now().astimezone()
+        dict_value = {"one": "two", "three": 4}
+        list_value = ["one", 2, 3.0]
+        bytes_value = "1234".encode("utf-8")
         noun1 = anoun(
             **{
                 "field1": "hello",
                 "field2": 5,
                 "field3": "b",
                 "timestampfield": datetime_value,
+                "dictfield": dict_value,
+                "listfield": list_value,
+                "blobfield": bytes_value,
             }
         )
         assert noun1.field1 == "hello"
         assert noun1.field2 == 5
         assert noun1.field3 == "b"
         assert noun1.timestampfield == datetime_value
+        assert noun1.dictfield == dict_value
+        assert noun1.listfield == list_value
+        assert noun1.blobfield == bytes_value
 
         assert noun1.serialize() == {
             "field1": "hello",
             "field2": 5,
             "field3": "b",
-            "timestampfield": datetime_value.astimezone(timezone.utc).isoformat(
-                timespec="milliseconds"
-            ),
+            "timestampfield": datetime_value.astimezone(timezone.utc).isoformat(),
+            "dictfield": b64encode(dumps(dict_value).encode("utf-8")).decode("utf-8"),
+            "listfield": b64encode(dumps(list_value).encode("utf-8")).decode("utf-8"),
+            "blobfield": b64encode(bytes_value).decode("utf-8"),
         }
+
+        new_noun1 = Entity.deserialize(anoun, noun1.serialize())
+        assert new_noun1 == noun1
 
     def test_instance_type(self, anoun):
         noun1 = anoun(**{"field1": "hello", "field2": 5})
@@ -61,29 +77,21 @@ class TestNoun:
     def test_bad_date_type(self, anoun):
         with pytest.raises(
             Exception,
-            match='For field, timestampfield, expected a value of one of the types: "datetime", "str", was "int"',
+            match='For field, timestampfield, expected a value of one of the types: "datetime", was "int"',
         ) as exc:
             noun1 = anoun(**{"field1": "hello", "timestampfield": 5})
 
-    def test_invalid_date_string(self, anoun):
-        with pytest.raises(
-            Exception,
-            match='Invalid value for field, "timestampfield": 1985-13-01T00:00:00. Error: month must be in 1..12',
-        ) as exc:
-            noun1 = anoun(
-                **{"field1": "hello", "timestampfield": "1985-13-01T00:00:00"}
-            )
-
-    def test_timestamp_as_string_string(self, anoun):
+    def test_timestamp(self, anoun):
         time_string = "1985-12-01T00:00:00Z"
-        noun1 = anoun(**{"field1": "hello", "timestampfield": time_string})
+        timestamp = isoparse(time_string)
+        noun1 = anoun(**{"field1": "hello", "timestampfield": timestamp})
 
         assert isinstance(noun1.timestampfield, datetime)
-        assert noun1.timestampfield == isoparse(time_string)
+        assert noun1.timestampfield == timestamp
 
         assert noun1.serialize() == {
             "field1": "hello",
-            "timestampfield": isoparse(time_string).isoformat(timespec="milliseconds"),
+            "timestampfield": timestamp.isoformat(),
         }
 
         # a datetime in the local timezone
@@ -99,9 +107,8 @@ class TestNoun:
         # confirm the two dates are equal
         assert a_datetime == noun1.timestampfield
 
-        assert noun1.timestampfield.isoformat(
-            timespec="milliseconds"
-        ) != a_datetime.isoformat(timespec="milliseconds")
-        assert noun1.timestampfield.isoformat(
-            timespec="milliseconds"
-        ) == a_datetime.astimezone(timezone.utc).isoformat(timespec="milliseconds")
+        assert noun1.timestampfield.isoformat() != a_datetime.isoformat()
+        assert (
+            noun1.timestampfield.isoformat()
+            == a_datetime.astimezone(timezone.utc).isoformat()
+        )

@@ -1,7 +1,6 @@
 import json
 import pytest
 
-from hmd_meta_types.entity import type_check
 from hmd_meta_types import Noun, Relationship, Entity
 
 
@@ -16,6 +15,9 @@ def anoun():
                 "field2": {"type": "integer"},
                 "field3": {"type": "enum", "enum_def": ["a", "b"]},
                 "timestampfield": {"type": "timestamp"},
+                "dictfield": {"type": "mapping"},
+                "listfield": {"type": "collection"},
+                "blobfield": {"type": "blob"},
             },
         }
 
@@ -32,51 +34,59 @@ def anoun():
 
         @property
         def field1(self):
-            if hasattr(self, "_field1"):
-                return self._field1
-            else:
-                return None
+            return self._getter(attribute_name="field1")
 
         @field1.setter
-        @type_check("field1", _entity_def["attributes"]["field1"])
         def field1(self, value):
-            self._field1 = value
+            self._setter(field_name="field1", value=value)
 
         @property
         def field2(self):
-            if hasattr(self, "_field2"):
-                return self._field2
-            else:
-                return None
+            return self._getter(attribute_name="field2")
 
         @field2.setter
-        @type_check("field2", _entity_def["attributes"]["field2"])
         def field2(self, value):
-            self._field2 = value
+            self._setter(field_name="field2", value=value)
 
         @property
         def field3(self):
-            if hasattr(self, "_field3"):
-                return self._field3
-            else:
-                return None
+            return self._getter(attribute_name="field3")
 
         @field3.setter
-        @type_check("field3", _entity_def["attributes"]["field3"])
         def field3(self, value):
-            self._field3 = value
+            self._setter(field_name="field3", value=value)
 
         @property
         def timestampfield(self):
-            if hasattr(self, "_timestampfield"):
-                return self._timestampfield
-            else:
-                return None
+            return self._getter(attribute_name="timestampfield")
 
         @timestampfield.setter
-        @type_check("timestampfield", _entity_def["attributes"]["timestampfield"])
         def timestampfield(self, value):
-            self._timestampfield = value
+            self._setter(field_name="timestampfield", value=value)
+
+        @property
+        def dictfield(self):
+            return self._getter(attribute_name="dictfield")
+
+        @dictfield.setter
+        def dictfield(self, value):
+            self._setter(field_name="dictfield", value=value)
+
+        @property
+        def listfield(self):
+            return self._getter(attribute_name="listfield")
+
+        @listfield.setter
+        def listfield(self, value):
+            self._setter(field_name="listfield", value=value)
+
+        @property
+        def blobfield(self):
+            return self._getter(attribute_name="blobfield")
+
+        @blobfield.setter
+        def blobfield(self, value):
+            self._setter(field_name="blobfield", value=value)
 
     return ANoun
 
@@ -113,29 +123,26 @@ def arel(anoun):
 
         @property
         def field1(self):
-            return self._field1
+            return self._getter("field1")
 
         @field1.setter
-        @type_check("field1", _entity_def["attributes"]["field1"])
         def field1(self, value):
-            self._field1 = value
+            self._setter("field1", value)
 
         @property
         def field2(self):
-            return self._field2
+            return self._getter("field2")
 
         @field2.setter
-        @type_check("field2", _entity_def["attributes"]["field2"])
         def field2(self, value):
-            self._field2 = value
+            self._setter("field2", value)
 
         @property
         def field3(self):
-            return self._field3
+            return self._getter("field3")
 
         @field3.setter
-        @type_check("field3", _entity_def["attributes"]["field3"])
         def field3(self, value):
-            self._field3 = value
+            self._setter("field3", value)
 
     return ARel
