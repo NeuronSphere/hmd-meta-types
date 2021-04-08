@@ -214,13 +214,6 @@ then deserialized into a Python object:
 
 .. code-block:: python
 
-    from hmd_lang_deployment.repo_instance import RepoInstance
-    from hmd_lang_deployment.repo_instance_req_repo_instance import (
-        RepoInstanceReqRepoInstance,
-    )
-    from hmd_meta_types import Entity
-    from json import dumps
-
     repo_instance1 = RepoInstance(name="repo_instance1", version="0.1.1")
     repo_instance2 = RepoInstance(name="repo_instance1", version="0.1.1")
 
