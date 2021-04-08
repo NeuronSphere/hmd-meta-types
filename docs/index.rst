@@ -30,8 +30,8 @@ There are three core python base classes:
 Example
 +++++++
 
-The following example shows a sample shows a sample definition of a relationship entity along with
-the python code that is generated. This will serve to illustrate the functionality of the
+The following example shows a sample definition of a relationship entity along with
+the python code that is generated from it. This will serve to illustrate the functionality of the
 base classes.
 
 .. code-block:: json
@@ -145,7 +145,7 @@ The primitive types include the following:
 
 Blob types are serialized and stored persistently as base64-encoded strings (see Serialization). The
 ``collection`` and ``mapping`` types are intended to provide a convenient way to store simple
-(json-serailizable) data using common language support, not as a way to model entity relationships.
+(i.e., json-serailizable) data using common language support, not as a way to model entity relationships.
 
 The blob types include:
 
@@ -171,7 +171,8 @@ Property Getters/Setters
 ++++++++++++++++++++++++
 
 In the generated code, attributes are created using the python ``@property`` wrapper. The
-implementation simply delegates to the ``Entity._setter`` and ``Entity._getter`` methods.
+implementation simply delegates to the ``Entity._setter`` and ``Entity._getter`` methods
+to store and retrieve field data, respectively.
 
 The ``Entity._setter`` method does runtime type checking to verify the data being stored and
 fails if a field marked as required is set to ``None``.
@@ -208,6 +209,53 @@ For the ``blob`` type, the following python code is used for serialization:
     # deserailization
     b64decode(serailized_string.encode(encoding="utf-8"))
 
+Consider the following code block, in which an object is serialized to json, printed, and
+then deserialized into a Python object:
+
+.. code-block:: python
+
+    from hmd_lang_deployment.repo_instance import RepoInstance
+    from hmd_lang_deployment.repo_instance_req_repo_instance import (
+        RepoInstanceReqRepoInstance,
+    )
+    from hmd_meta_types import Entity
+    from json import dumps
+
+    repo_instance1 = RepoInstance(name="repo_instance1", version="0.1.1")
+    repo_instance2 = RepoInstance(name="repo_instance1", version="0.1.1")
+
+    repo_instance_req_repo_instance =  RepoInstanceReqRepoInstance(
+        ref_from=repo_instance1,
+        ref_to=repo_instance2,
+        role="the_thing",
+        config={"one": "two", "three": 4},
+    )
+
+    serialized = repo_instance_req_repo_instance.serialize()
+
+    print(dumps(serialized, indent=2))
+
+    new_object = Entity.deserialize(RepoInstanceReqRepoInstance, serialized)
+
+    print(new_object.config)
+
+The output from this is:
+
+.. code-block:: json
+
+    {
+      "role": "the_thing",
+      "config": "eyJvbmUiOiAidHdvIiwgInRocmVlIjogNH0=",
+      "ref_to": {
+        "name": "repo_instance1",
+        "version": "0.1.1"
+      },
+      "ref_from": {
+        "name": "repo_instance1",
+        "version": "0.1.1"
+      }
+    }
+    {"one": "two", "three": 4}
 
 
 .. toctree::
