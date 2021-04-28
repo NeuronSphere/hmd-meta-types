@@ -163,7 +163,7 @@ export abstract class Entity {
     return `${namespace !== undefined ? namespace + '.' : ''}${name}`;
   }
 
-  public serialize(): EntityData<Entity> {
+  protected _serialize(): EntityData<Entity> {
     const entity_definition = this.entityDefinition();
     let result: any = {};
 
@@ -190,6 +190,10 @@ export abstract class Entity {
 export abstract class Noun extends Entity {
   to_rels: { [k: string]: Relationship<Noun, Noun>[] } = {};
   from_rels: { [k: string]: Relationship<Noun, Noun>[] } = {};
+
+  public serialize(): EntityData<Noun> {
+    return this._serialize();
+  }
 }
 
 export abstract class Relationship<
@@ -207,6 +211,18 @@ export abstract class Relationship<
     super(obj);
     this._ref_from = ref_from;
     this._ref_to = ref_to;
+  }
+
+  public serialize(): EntityData<Relationship> {
+    const result = this._serialize();
+    if (this.refFrom !== undefined) {
+      result.ref_from = this.refFrom.serialize();
+    }
+    if (this.refTo !== undefined) {
+      result.ref_to = this.refTo.serialize();
+    }
+
+    return result;
   }
 
   public get refFrom(): TFrom | undefined {

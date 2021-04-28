@@ -324,7 +324,8 @@ describe('Noun Factory', () => {
 
 describe('Relationship', () => {
   let arel: ARelationship;
-  let a1, a2: ANoun;
+  let a1: ANoun;
+  let a2: ANoun;
   beforeAll(() => {
     a1 = new ANoun({
       field1: 'test',
@@ -367,6 +368,8 @@ describe('Relationship', () => {
       field1: 'test',
       field2: 2,
       field3: 'a',
+      ref_from: a1.serialize(),
+      ref_to: a2.serialize(),
     });
   });
   it('should set identifier', () => {
@@ -389,7 +392,8 @@ describe('Relationship', () => {
 
 describe('Relationship Factory', () => {
   let genRel: ReturnType<typeof relationshipFactory>;
-  let a1, a2: ANoun;
+  let a1: ANoun;
+  let a2: ANoun;
   beforeAll(() => {
     a1 = new ANoun({
       field1: 'test',
@@ -433,6 +437,8 @@ describe('Relationship Factory', () => {
       field1: 'test',
       field2: 2,
       field3: 'a',
+      ref_from: a1.serialize(),
+      ref_to: a2.serialize(),
     });
   });
   it('should set identifier', () => {
