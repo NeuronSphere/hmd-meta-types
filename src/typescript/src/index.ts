@@ -1,5 +1,6 @@
 import moment from 'moment';
 moment().utc(true);
+moment.suppressDeprecationWarnings = true;
 
 export type Timestamp = moment.Moment | string;
 export type Mapping = { [k: string]: any } | string;
