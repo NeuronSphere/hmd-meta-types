@@ -19,7 +19,7 @@
     "typescript": "^4.2.4"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --project tsconfig.prod.json",
     "test": "jest"
   },
   "devDependencies": {
