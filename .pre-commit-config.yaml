@@ -4,11 +4,6 @@ repos:
     hooks:
       - id: commitizen
         stages: [commit-msg]
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.3.0
-    hooks:
-      - id: check-json
-      - id: pretty-format-json
   - repo: https://github.com/psf/black
     rev: 19.3b0
     hooks:
