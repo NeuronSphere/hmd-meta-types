@@ -26,12 +26,24 @@ export interface AttributeDefintion {
 
 type EntityAttributes = { [k: string]: AttributeDefintion };
 
-export type EntityDefinition = {
+type EntitySchemaExtenion = { [k: string]: any };
+
+export type EntitySchema = {
   name: string;
   namespace: string;
   metatype: 'noun' | 'relationship';
+  extensions?: EntitySchemaExtenion;
   attributes: EntityAttributes;
 };
+
+export interface NounSchema extends EntitySchema {
+  metatype: 'noun';
+}
+export interface RelationshipSchema extends EntitySchema {
+  metatype: 'relationship';
+  ref_from: string;
+  ref_to: string;
+}
 
 type AttributeType<A extends AttributeDefintion> = A['type'] extends
   | 'string'
@@ -47,19 +59,19 @@ type AttributeType<A extends AttributeDefintion> = A['type'] extends
   ? Timestamp
   : any;
 
-type RequiredAttributeKeys<D extends EntityDefinition> = {
+type RequiredAttributeKeys<D extends EntitySchema> = {
   [P in keyof D['attributes']]: D['attributes'][P]['required'] extends true
     ? P
     : never;
 }[keyof D['attributes']];
 
-type NonRequiredAttributeKeys<D extends EntityDefinition> = {
+type NonRequiredAttributeKeys<D extends EntitySchema> = {
   [P in keyof D['attributes']]: D['attributes'][P]['required'] extends true
     ? never
     : P;
 }[keyof D['attributes']];
 
-type EntityType<D extends EntityDefinition> = {
+type EntityType<D extends EntitySchema> = {
   identifier?: string | undefined;
 } & {
   [Property in RequiredAttributeKeys<D>]: AttributeType<
@@ -137,7 +149,7 @@ export abstract class Entity {
     this._identifier = obj.identifier;
   }
 
-  abstract entityDefinition(): EntityDefinition;
+  abstract entityDefinition(): EntitySchema;
   protected abstract data: EntityData<Entity>;
 
   protected _setter(attr: string, value: any) {
@@ -191,6 +203,8 @@ export abstract class Noun extends Entity {
   to_rels: { [k: string]: Relationship<Noun, Noun>[] } = {};
   from_rels: { [k: string]: Relationship<Noun, Noun>[] } = {};
 
+  abstract entityDefinition(): NounSchema;
+
   public serialize(): EntityData<Noun> {
     return this._serialize();
   }
@@ -212,6 +226,8 @@ export abstract class Relationship<
     this._ref_from = ref_from;
     this._ref_to = ref_to;
   }
+
+  abstract entityDefinition(): RelationshipSchema;
 
   public serialize(): EntityData<Relationship> {
     const result = this._serialize();
@@ -243,10 +259,10 @@ export abstract class Relationship<
 }
 
 export function nounFactory(
-  definition: EntityDefinition,
-  obj: EntityType<EntityDefinition>,
+  definition: NounSchema,
+  obj: EntityType<EntitySchema>,
 ) {
-  const validateObj = (obj: EntityType<EntityDefinition>) => {
+  const validateObj = (obj: EntityType<EntitySchema>) => {
     const attributes = new Set(Object.keys(definition.attributes));
     const requiredFields = new Set(
       Object.keys(definition.attributes).filter(
@@ -277,31 +293,31 @@ export function nounFactory(
       let value = validateAttributeValue(
         attr,
         definition.attributes[attr],
-        obj[attr as keyof EntityType<EntityDefinition>],
+        obj[attr as keyof EntityType<EntitySchema>],
       );
       data[attr] = value;
     }
 
-    return data as EntityType<EntityDefinition>;
+    return data as EntityType<EntitySchema>;
   };
 
   class GenericNoun extends Noun {
-    entityDefinition(): EntityDefinition {
+    entityDefinition(): NounSchema {
       return definition;
     }
-    protected data: EntityType<EntityDefinition>;
+    protected data: EntityType<EntitySchema>;
 
-    constructor(obj: EntityType<EntityDefinition>) {
+    constructor(obj: EntityType<EntitySchema>) {
       super(obj);
       this.data = validateObj(obj);
 
       for (let attr in this.data) {
         Object.defineProperty(this, attr, {
           get: () =>
-            this.data[attr as keyof EntityType<EntityDefinition>],
+            this.data[attr as keyof EntityType<EntitySchema>],
           set: (value: any) => {
             this.data[
-              attr as keyof EntityType<EntityDefinition>
+              attr as keyof EntityType<EntitySchema>
             ] = this._setter(attr, value);
           },
         });
@@ -310,19 +326,19 @@ export function nounFactory(
   }
 
   const noun: unknown = new GenericNoun(obj);
-  return noun as Noun & EntityType<EntityDefinition>;
+  return noun as Noun & EntityType<EntitySchema>;
 }
 
 export function relationshipFactory<
   TFrom extends Noun = Noun,
   TTo extends Noun = Noun
 >(
-  definition: EntityDefinition,
-  obj: EntityType<EntityDefinition>,
+  definition: RelationshipSchema,
+  obj: EntityType<EntitySchema>,
   refFrom?: TFrom,
   refTo?: TTo,
 ) {
-  const validateObj = (obj: EntityType<EntityDefinition>) => {
+  const validateObj = (obj: EntityType<EntitySchema>) => {
     const attributes = new Set(Object.keys(definition.attributes));
     const requiredFields = new Set(
       Object.keys(definition.attributes).filter(
@@ -353,22 +369,22 @@ export function relationshipFactory<
       let value = validateAttributeValue(
         attr,
         definition.attributes[attr],
-        obj[attr as keyof EntityType<EntityDefinition>],
+        obj[attr as keyof EntityType<EntitySchema>],
       );
       data[attr] = value;
     }
 
-    return data as EntityType<EntityDefinition>;
+    return data as EntityType<EntitySchema>;
   };
 
   class GenericRelationship extends Relationship<TFrom, TTo> {
-    entityDefinition(): EntityDefinition {
+    entityDefinition(): RelationshipSchema {
       return definition;
     }
-    protected data: EntityType<EntityDefinition>;
+    protected data: EntityType<EntitySchema>;
 
     constructor(
-      obj: EntityType<EntityDefinition>,
+      obj: EntityType<EntitySchema>,
       from?: TFrom,
       to?: TTo,
     ) {
@@ -378,10 +394,10 @@ export function relationshipFactory<
       for (let attr in this.data) {
         Object.defineProperty(this, attr, {
           get: () =>
-            this.data[attr as keyof EntityType<EntityDefinition>],
+            this.data[attr as keyof EntityType<EntitySchema>],
           set: (value: any) => {
             this.data[
-              attr as keyof EntityType<EntityDefinition>
+              attr as keyof EntityType<EntitySchema>
             ] = this._setter(attr, value);
           },
         });
@@ -390,5 +406,5 @@ export function relationshipFactory<
   }
 
   const noun: unknown = new GenericRelationship(obj, refFrom, refTo);
-  return noun as Noun & EntityType<EntityDefinition>;
+  return noun as Noun & EntityType<EntitySchema>;
 }

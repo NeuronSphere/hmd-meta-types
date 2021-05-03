@@ -1,5 +1,5 @@
 import {
-  EntityDefinition,
+  EntitySchema,
   EntityData,
   Noun,
   nounFactory,
@@ -10,9 +10,11 @@ import {
   Relationship,
   Entity,
   relationshipFactory,
+  NounSchema,
+  RelationshipSchema,
 } from '../src/index';
 
-interface ANounDefinition extends EntityDefinition {
+interface ANounDefinition extends NounSchema {
   name: 'a_noun';
   namespace: 'name.space';
   metatype: 'noun';
@@ -120,7 +122,7 @@ class ANoun extends Noun {
   }
 }
 
-interface ARelationshipDefinition extends EntityDefinition {
+interface ARelationshipDefinition extends RelationshipSchema {
   attributes: {
     field1: { type: 'string'; required: true };
     field2: { type: 'integer' };
@@ -136,10 +138,12 @@ const rel_definition: ARelationshipDefinition = {
     field2: { type: 'integer' },
     field3: { type: 'enum', enum_def: ['a', 'b'] },
   },
+  ref_from: 'name.space.a_noun',
+  ref_to: 'name.space.a_noun',
 };
 
 class ARelationship extends Relationship<ANoun, ANoun> {
-  entityDefinition(): EntityDefinition {
+  entityDefinition() {
     return ARelationship.entity_definition;
   }
   protected data: EntityData<ARelationship>;
@@ -155,7 +159,7 @@ class ARelationship extends Relationship<ANoun, ANoun> {
     for (let attr in ARelationship.entity_definition.attributes) {
       let value = this._setter(
         attr,
-        obj[attr as keyof EntityData<ANoun>],
+        obj[attr as keyof EntityData<ARelationship>],
       );
       data[attr] = value;
     }
