@@ -95,11 +95,13 @@ def anoun():
 def arel(anoun):
     class ARel(Relationship):
         _entity_def = {
+            "name": "a_relationship",
+            "namespace": "name.space",
             "attributes": {
                 "field1": {"type": "string", "required": True},
                 "field2": {"type": "integer"},
                 "field3": {"type": "enum", "enum_def": ["a", "b"]},
-            }
+            },
         }
 
         def __init__(self, **kwargs):

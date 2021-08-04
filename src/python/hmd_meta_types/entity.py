@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import functools
 from collections import defaultdict
-from typing import Dict, Type, Any
+from typing import Dict, Type, Any, Union
 from datetime import datetime, timezone
 from dateutil.parser import isoparse
 from json import dumps, loads
@@ -140,10 +140,16 @@ class Entity(ABC):
                 result[attr] = value
 
         if hasattr(self, "ref_to"):
-            result["ref_to"] = self.ref_to.serialize()
+            if isinstance(self.ref_to, self.ref_to_type()):
+                result["ref_to"] = self.ref_to.identifier
+            else:
+                result["ref_to"] = self.ref_to
 
         if hasattr(self, "ref_from"):
-            result["ref_from"] = self.ref_from.serialize()
+            if isinstance(self.ref_from, self.ref_from_type()):
+                result["ref_from"] = self.ref_from.identifier
+            else:
+                result["ref_from"] = self.ref_from
 
         return result
 
@@ -164,13 +170,6 @@ class Entity(ABC):
                     elif field_def["type"] == "blob":
                         result = b64decode(result.encode(encoding="utf-8"))
                 new_data[attr] = result
-        if issubclass(entity_type, Relationship):
-            new_data["ref_to"] = Entity.deserialize(
-                entity_type.ref_to_type(), new_data["ref_to"]
-            )
-            new_data["ref_from"] = Entity.deserialize(
-                entity_type.ref_from_type(), new_data["ref_from"]
-            )
 
         return entity_type(**new_data)
 
@@ -221,25 +220,35 @@ class Relationship(Entity):
         pass
 
     @property
-    def ref_from(self) -> Noun:
+    def ref_from(self) -> Union[Noun, str]:
         return self._ref_from
 
     @ref_from.setter
-    def ref_from(self, value: Noun):
-        if not isinstance(value, self.__class__.ref_from_type()):
+    def ref_from(self, value: Union[Noun, str]):
+        if not isinstance(value, self.__class__.ref_from_type()) and not isinstance(
+            value, str
+        ):
             raise Exception(
-                f"From reference must be of type {self.__class__.ref_from_type().__name__}."
+                f'From reference must be of type {self.__class__.ref_from_type().__name__} or str, got "{value}".'
             )
         self._ref_from = value
+        if isinstance(value, Noun):
+            if self not in value.from_rels[self.__class__.get_namespace_name()]:
+                value.from_rels[self.__class__.get_namespace_name()].append(self)
 
     @property
-    def ref_to(self) -> Noun:
+    def ref_to(self) -> Union[Noun, str]:
         return self._ref_to
 
     @ref_to.setter
-    def ref_to(self, value: Noun):
-        if not isinstance(value, self.__class__.ref_to_type()):
+    def ref_to(self, value: Union[Noun, str]):
+        if not isinstance(value, self.__class__.ref_to_type()) and not isinstance(
+            value, str
+        ):
             raise Exception(
-                f"To reference must be of type {self.__class__.ref_to_type().__name__}."
+                f"To reference must be of type {self.__class__.ref_to_type().__name__} or str."
             )
         self._ref_to = value
+        if isinstance(value, Noun):
+            if self not in value.to_rels[self.__class__.get_namespace_name()]:
+                value.to_rels[self.__class__.get_namespace_name()].append(self)

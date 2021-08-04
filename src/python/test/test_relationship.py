@@ -7,8 +7,12 @@ from hmd_meta_types import Entity
 class TestRel:
     def test_okay(self, arel, anoun):
 
-        noun1 = anoun(**{"field1": "noun1", "field2": 5, "field3": "b"})
-        noun2 = anoun(**{"field1": "noun2", "field2": 10, "field3": "a"})
+        noun1 = anoun(
+            **{"identifier": "5", "field1": "noun1", "field2": 5, "field3": "b"}
+        )
+        noun2 = anoun(
+            **{"identifier": "6", "field1": "noun2", "field2": 10, "field3": "a"}
+        )
         rel1 = arel(
             **{
                 "ref_from": noun1,
@@ -26,11 +30,11 @@ class TestRel:
             "field1": "hello",
             "field2": 5,
             "field3": "b",
-            "ref_from": {"field1": "noun1", "field2": 5, "field3": "b"},
-            "ref_to": {"field1": "noun2", "field2": 10, "field3": "a"},
+            "ref_from": "5",
+            "ref_to": "6",
         }
 
-        assert rel1 == Entity.deserialize(arel, rel1.serialize())
+        assert rel1 != Entity.deserialize(arel, rel1.serialize())
 
     def test_bad_type(self, arel, anoun):
         noun1 = anoun(**{"field1": "noun1", "field2": 5, "field3": "b"})
@@ -73,6 +77,6 @@ class TestRel:
         assert noun1.field3 == "b"
 
         with pytest.raises(
-            Exception, match="To reference must be of type ANoun."
+            Exception, match="To reference must be of type ANoun or str\\."
         ) as exc:
-            rel1.ref_to = "hello"
+            rel1.ref_to = 5
