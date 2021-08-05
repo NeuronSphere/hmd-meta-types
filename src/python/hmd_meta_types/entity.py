@@ -173,6 +173,19 @@ class Entity(ABC):
 
         return entity_type(**new_data)
 
+    def set_equals(self, other):
+        entity_def = self.__class__.entity_definition()
+        if isinstance(other, self.__class__):
+            attributes_to_copy = ["identifier"]
+            if hasattr(self, "ref_to"):
+                attributes_to_copy += ["ref_from", "ref_to"]
+            attributes_to_copy += [
+                name for name, _ in entity_def.get("attributes", {}).items()
+            ]
+
+            for attr in attributes_to_copy:
+                setattr(self, attr, getattr(other, attr))
+
     def __eq__(self, other):
         entity_def = self.__class__.entity_definition()
         attributes_to_compare = ["identifier"]

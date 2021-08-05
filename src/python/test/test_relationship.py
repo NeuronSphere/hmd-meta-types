@@ -80,3 +80,35 @@ class TestRel:
             Exception, match="To reference must be of type ANoun or str\\."
         ) as exc:
             rel1.ref_to = 5
+
+    def test_set_equals(self, arel, anoun):
+
+        noun1 = anoun(
+            **{"identifier": "5", "field1": "noun1", "field2": 5, "field3": "b"}
+        )
+        noun2 = anoun(
+            **{"identifier": "6", "field1": "noun2", "field2": 10, "field3": "a"}
+        )
+        rel1 = arel(
+            **{
+                "ref_from": noun1,
+                "ref_to": noun2,
+                "field1": "hello",
+                "field2": 5,
+                "field3": "b",
+            }
+        )
+
+        rel2 = arel(
+            **{
+                "ref_from": noun2,
+                "ref_to": noun1,
+                "field1": "hello",
+                "field2": 6,
+                "field3": "b",
+            }
+        )
+
+        rel1.set_equals(rel2)
+        assert rel1 is not rel2
+        assert rel1 == rel2

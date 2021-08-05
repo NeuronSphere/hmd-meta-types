@@ -243,6 +243,25 @@ describe('Noun', () => {
     );
     expect(anoun.timestampfield).toEqual('2021-01-01T05:00:00.000Z');
   });
+  it('should accept same Noun to setEquals', () => {
+    const noun2 = new ANoun({
+      identifier: anoun.identifier,
+      field1: 'foobar',
+      field2: 3,
+      field3: 'b',
+    });
+
+    anoun.setEquals(noun2);
+
+    expect(anoun).not.toBe(noun2);
+    expect(anoun.field1).toBe('foobar');
+    expect(anoun.field2).toBe(3);
+    expect(anoun.field3).toBe('b');
+    expect(anoun.timestampfield).toBeUndefined();
+    expect(anoun.dictfield).toBeUndefined();
+    expect(anoun.listfield).toBeUndefined();
+    expect(anoun.blobfield).toBeUndefined();
+  });
 });
 
 describe('Noun Factory', () => {
@@ -391,6 +410,25 @@ describe('Relationship', () => {
     arel.refTo = from;
     expect(arel.refFrom?.field2).toBe(2);
     expect(arel.refTo?.field2).toBe(1);
+  });
+  it('should accept same Realtionship to setEquals', () => {
+    const rel2 = new ARelationship(
+      {
+        identifier: arel.identifier,
+        field1: 'foobar',
+        field2: 3,
+        field3: 'b',
+      },
+      a1,
+      a2,
+    );
+
+    arel.setEquals(rel2);
+
+    expect(arel).not.toBe(rel2);
+    expect(arel.field1).toBe('foobar');
+    expect(arel.field2).toBe(3);
+    expect(arel.field3).toBe('b');
   });
 });
 

@@ -197,6 +197,14 @@ export abstract class Entity {
 
     return result as EntityData<Entity>;
   }
+
+  public setEquals(other: Entity) {
+    if (other.namespaceName === this.namespaceName) {
+      for (const attr in this.entityDefinition().attributes) {
+        this.data[attr] = this._setter(attr, other.data[attr]);
+      }
+    }
+  }
 }
 
 export abstract class Noun extends Entity {
@@ -212,7 +220,7 @@ export abstract class Noun extends Entity {
 
 export abstract class Relationship<
   TFrom extends Noun = Noun,
-  TTo extends Noun = Noun
+  TTo extends Noun = Noun,
 > extends Entity {
   private _ref_from?: TFrom;
   private _ref_to?: TTo;
@@ -316,9 +324,8 @@ export function nounFactory(
           get: () =>
             this.data[attr as keyof EntityType<EntitySchema>],
           set: (value: any) => {
-            this.data[
-              attr as keyof EntityType<EntitySchema>
-            ] = this._setter(attr, value);
+            this.data[attr as keyof EntityType<EntitySchema>] =
+              this._setter(attr, value);
           },
         });
       }
@@ -331,7 +338,7 @@ export function nounFactory(
 
 export function relationshipFactory<
   TFrom extends Noun = Noun,
-  TTo extends Noun = Noun
+  TTo extends Noun = Noun,
 >(
   definition: RelationshipSchema,
   obj: EntityType<EntitySchema>,
@@ -396,9 +403,8 @@ export function relationshipFactory<
           get: () =>
             this.data[attr as keyof EntityType<EntitySchema>],
           set: (value: any) => {
-            this.data[
-              attr as keyof EntityType<EntitySchema>
-            ] = this._setter(attr, value);
+            this.data[attr as keyof EntityType<EntitySchema>] =
+              this._setter(attr, value);
           },
         });
       }

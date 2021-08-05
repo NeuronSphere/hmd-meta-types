@@ -112,3 +112,11 @@ class TestNoun:
             noun1.timestampfield.isoformat()
             == a_datetime.astimezone(timezone.utc).isoformat()
         )
+
+    def test_set_equals(self, anoun):
+        noun1 = anoun(**{"field1": "hello", "field2": 5})
+        noun2 = anoun(**{"field1": "hello, world"})
+
+        noun1.set_equals(noun2)
+        assert noun1 is not noun2
+        assert noun1 == noun2
