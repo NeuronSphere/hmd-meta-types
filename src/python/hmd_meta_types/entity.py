@@ -121,7 +121,7 @@ class Entity(ABC):
         namespace = entity_definition["namespace"]
         return ((namespace + ".") if namespace else "") + name
 
-    def serialize(self) -> Dict:
+    def serialize(self, encode_blobs=True) -> Dict:
         entity_definition = self.__class__.entity_definition()
         result = {}
         if self.identifier:
@@ -132,9 +132,10 @@ class Entity(ABC):
                 if isinstance(value, datetime):
                     value = value.isoformat()
                 elif definition["type"] in ["collection", "mapping"]:
-                    value = b64encode(dumps(value).encode(encoding="utf-8")).decode(
-                        "utf-8"
-                    )
+                    if encode_blobs:
+                        value = b64encode(dumps(value).encode(encoding="utf-8")).decode(
+                            "utf-8"
+                        )
                 elif definition["type"] == "blob":
                     value = b64encode(value).decode("utf-8")
                 result[attr] = value
