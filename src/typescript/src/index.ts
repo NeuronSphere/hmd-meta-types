@@ -289,7 +289,7 @@ export function nounFactory(
       );
 
     const extraFields = [...Array.from(objFields)].filter(
-      (v) => !attributes.has(v),
+      (v) => !attributes.has(v) && v !== 'identifier',
     );
 
     if (extraFields.length > 0)
@@ -364,7 +364,7 @@ export function relationshipFactory<
       );
 
     const extraFields = [...Array.from(objFields)].filter(
-      (v) => !attributes.has(v),
+      (v) => !attributes.has(v) && v !== 'identifier',
     );
 
     if (extraFields.length > 0)
