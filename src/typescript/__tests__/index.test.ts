@@ -142,7 +142,7 @@ const rel_definition: ARelationshipDefinition = {
   ref_to: 'name.space.a_noun',
 };
 
-class ARelationship extends Relationship<ANoun, ANoun> {
+class ARelationship extends Relationship {
   entityDefinition() {
     return ARelationship.entity_definition;
   }
@@ -151,8 +151,8 @@ class ARelationship extends Relationship<ANoun, ANoun> {
 
   constructor(
     obj: EntityData<ARelationship>,
-    ref_from: ANoun,
-    ref_to: ANoun,
+    ref_from: string,
+    ref_to: string,
   ) {
     super(obj, ref_from, ref_to);
     let data: any = {};
@@ -223,8 +223,20 @@ describe('Noun', () => {
       timestampfield: '2020-01-01T00:00:00.000Z',
       dictfield: btoa(JSON.stringify({ test: 'any' })),
       listfield: btoa(JSON.stringify(['any', 2])),
-      blobfield: btoa(JSON.stringify('bigblob')),
+      blobfield: btoa('bigblob'),
     });
+    expect(anoun.serialize({ includeSchema: true }).__schema).toEqual(
+      'name.space.a_noun',
+    );
+    expect(
+      anoun.serialize({ encodeBlobs: false })['dictfield'],
+    ).toEqual({ test: 'any' });
+  });
+  it('should deserialize properly', () => {
+    const serialized = anoun.serialize();
+    expect(Entity.deserialize(entity_definition, serialized)).toEqual(
+      anoun,
+    );
   });
   it('should set identifier', () => {
     anoun.identifier = 'test';
@@ -297,7 +309,7 @@ describe('Noun Factory', () => {
       timestampfield: '2020-01-01T00:00:00.000Z',
       dictfield: btoa(JSON.stringify({ test: 'any' })),
       listfield: btoa(JSON.stringify(['any', 2])),
-      blobfield: btoa(JSON.stringify('bigblob')),
+      blobfield: btoa('bigblob'),
     });
   });
   it('should set identifier', () => {
@@ -347,27 +359,11 @@ describe('Noun Factory', () => {
 
 describe('Relationship', () => {
   let arel: ARelationship;
-  let a1: ANoun;
-  let a2: ANoun;
+  let a1: string;
+  let a2: string;
   beforeAll(() => {
-    a1 = new ANoun({
-      field1: 'test',
-      field2: 1,
-      field3: 'a',
-      timestampfield: '2020-01-01T00:00:00.000',
-      dictfield: { test: 'any' },
-      listfield: ['any', 2],
-      blobfield: 'bigblob',
-    });
-    a2 = new ANoun({
-      field1: 'test',
-      field2: 2,
-      field3: 'b',
-      timestampfield: '2020-01-01T00:00:00.000',
-      dictfield: { test: 'any' },
-      listfield: ['any', 2],
-      blobfield: 'bigblob',
-    });
+    a1 = 'noun1';
+    a2 = 'noun2';
     arel = new ARelationship(
       {
         field1: 'test',
@@ -391,25 +387,26 @@ describe('Relationship', () => {
       field1: 'test',
       field2: 2,
       field3: 'a',
-      ref_from: a1.serialize(),
-      ref_to: a2.serialize(),
+      ref_from: a1,
+      ref_to: a2,
     });
+    expect(arel.serialize({ includeSchema: true }).__schema).toEqual(
+      'name.space.a_relationship',
+    );
+  });
+  it('should deserialize properly', () => {
+    const serialized = arel.serialize();
+    expect(Entity.deserialize(rel_definition, serialized)).toEqual(
+      arel,
+    );
   });
   it('should set identifier', () => {
     arel.identifier = 'test';
     expect(arel.identifier).toBe('test');
   });
   it('should have from/to refs', () => {
-    let from = arel.refFrom;
-    let to = arel.refTo;
-
-    expect(from?.field2).toBe(1);
-    expect(to?.field2).toBe(2);
-
-    arel.refFrom = to;
-    arel.refTo = from;
-    expect(arel.refFrom?.field2).toBe(2);
-    expect(arel.refTo?.field2).toBe(1);
+    expect(arel.refFrom).toEqual(a1);
+    expect(arel.refTo).toEqual(a2);
   });
   it('should accept same Realtionship to setEquals', () => {
     const rel2 = new ARelationship(
@@ -434,27 +431,11 @@ describe('Relationship', () => {
 
 describe('Relationship Factory', () => {
   let genRel: ReturnType<typeof relationshipFactory>;
-  let a1: ANoun;
-  let a2: ANoun;
+  let a1: string;
+  let a2: string;
   beforeAll(() => {
-    a1 = new ANoun({
-      field1: 'test',
-      field2: 1,
-      field3: 'a',
-      timestampfield: '2020-01-01T00:00:00.000',
-      dictfield: { test: 'any' },
-      listfield: ['any', 2],
-      blobfield: 'bigblob',
-    });
-    a2 = new ANoun({
-      field1: 'test',
-      field2: 2,
-      field3: 'b',
-      timestampfield: '2020-01-01T00:00:00.000',
-      dictfield: { test: 'any' },
-      listfield: ['any', 2],
-      blobfield: 'bigblob',
-    });
+    a1 = 'noun1';
+    a2 = 'noun2';
     genRel = relationshipFactory(
       rel_definition,
       {
@@ -479,8 +460,8 @@ describe('Relationship Factory', () => {
       field1: 'test',
       field2: 2,
       field3: 'a',
-      ref_from: a1.serialize(),
-      ref_to: a2.serialize(),
+      ref_from: a1,
+      ref_to: a2,
     });
   });
   it('should set identifier', () => {
@@ -488,15 +469,7 @@ describe('Relationship Factory', () => {
     expect(genRel.identifier).toBe('test');
   });
   it('should have from/to refs', () => {
-    let from = genRel.refFrom;
-    let to = genRel.refTo;
-
-    expect(from?.field2).toBe(1);
-    expect(to?.field2).toBe(2);
-
-    genRel.refFrom = to;
-    genRel.refTo = from;
-    expect(genRel.refFrom?.field2).toBe(2);
-    expect(genRel.refTo?.field2).toBe(1);
+    expect(genRel.refFrom).toEqual(a1);
+    expect(genRel.refTo).toEqual(a2);
   });
 });

@@ -73,6 +73,7 @@ type NonRequiredAttributeKeys<D extends EntitySchema> = {
 
 type EntityType<D extends EntitySchema> = {
   identifier?: string | undefined;
+  __schema?: string | undefined;
 } & {
   [Property in RequiredAttributeKeys<D>]: AttributeType<
     D['attributes'][Property]
@@ -143,6 +144,11 @@ const validateAttributeValue = (
 
   return value;
 };
+
+export type SerializationOptions = {
+  encodeBlobs?: boolean;
+  includeSchema?: boolean;
+};
 export abstract class Entity {
   _identifier: string | undefined;
   constructor(obj: EntityData<Entity>) {
@@ -175,7 +181,12 @@ export abstract class Entity {
     return `${namespace !== undefined ? namespace + '.' : ''}${name}`;
   }
 
-  protected _serialize(): EntityData<Entity> {
+  protected _serialize(
+    { encodeBlobs, includeSchema }: SerializationOptions = {
+      encodeBlobs: true,
+      includeSchema: false,
+    },
+  ): EntityData<Entity> {
     const entity_definition = this.entityDefinition();
     let result: any = {};
 
@@ -186,14 +197,16 @@ export abstract class Entity {
       let value: any = this.data[attr as keyof EntityData<Entity>];
 
       if (value != null) {
-        if (
-          ['collection', 'mapping', 'blob'].indexOf(attrDef.type) > -1
-        ) {
-          value = btoa(JSON.stringify(value));
+        if (['collection', 'mapping'].indexOf(attrDef.type) > -1) {
+          if (encodeBlobs) value = btoa(JSON.stringify(value));
+        } else if (attrDef.type === 'blob') {
+          value = btoa(value);
         }
         result[attr as keyof EntityData<Entity>] = value;
       }
     }
+
+    if (includeSchema) result['__schema'] = this.namespaceName;
 
     return result as EntityData<Entity>;
   }
@@ -205,6 +218,48 @@ export abstract class Entity {
       }
     }
   }
+
+  static deserialize(
+    schema: EntitySchema,
+    data: EntityType<EntitySchema>,
+  ) {
+    const newData = { ...data };
+    if (newData['__schema']) {
+      if (
+        `${
+          schema.namespace !== undefined ? schema.namespace + '.' : ''
+        }${schema.name}` !== newData['__schema']
+      )
+        throw new Error('Mismatching schemas in deserialize call');
+      delete newData['__schema'];
+    }
+    for (let attr in schema.attributes) {
+      if (newData[attr]) {
+        let result = newData[attr];
+        if (schema.attributes[attr].type === 'timestamp') {
+          result = parseTimestamp(result);
+        } else if (
+          ['mapping', 'collection'].indexOf(
+            schema.attributes[attr].type,
+          ) >= 0
+        ) {
+          result = JSON.parse(atob(result));
+        } else if (schema.attributes[attr].type === 'blob') {
+          result = atob(result);
+        }
+        newData[attr] = result;
+      }
+    }
+
+    return schema.metatype === 'noun'
+      ? nounFactory(schema as NounSchema, newData)
+      : relationshipFactory(
+          schema as RelationshipSchema,
+          newData,
+          newData['ref_from'],
+          newData['ref_to'],
+        );
+  }
 }
 
 export abstract class Noun extends Entity {
@@ -213,14 +268,14 @@ export abstract class Noun extends Entity {
 
   abstract entityDefinition(): NounSchema;
 
-  public serialize(): EntityData<Noun> {
-    return this._serialize();
+  public serialize(opts?: SerializationOptions): EntityData<Noun> {
+    return this._serialize(opts);
   }
 }
 
 export abstract class Relationship<
-  TFrom extends Noun = Noun,
-  TTo extends Noun = Noun,
+  TFrom extends string | Noun = string,
+  TTo extends string | Noun = string,
 > extends Entity {
   private _ref_from?: TFrom;
   private _ref_to?: TTo;
@@ -237,13 +292,15 @@ export abstract class Relationship<
 
   abstract entityDefinition(): RelationshipSchema;
 
-  public serialize(): EntityData<Relationship> {
-    const result = this._serialize();
+  public serialize(
+    opts?: SerializationOptions,
+  ): EntityData<Relationship> {
+    const result = this._serialize(opts);
     if (this.refFrom !== undefined) {
-      result.ref_from = this.refFrom.serialize();
+      result.ref_from = this.refFrom;
     }
     if (this.refTo !== undefined) {
-      result.ref_to = this.refTo.serialize();
+      result.ref_to = this.refTo;
     }
 
     return result;
@@ -337,8 +394,8 @@ export function nounFactory(
 }
 
 export function relationshipFactory<
-  TFrom extends Noun = Noun,
-  TTo extends Noun = Noun,
+  TFrom extends string | Noun = string,
+  TTo extends string | Noun = string,
 >(
   definition: RelationshipSchema,
   obj: EntityType<EntitySchema>,
@@ -364,7 +421,11 @@ export function relationshipFactory<
       );
 
     const extraFields = [...Array.from(objFields)].filter(
-      (v) => !attributes.has(v) && v !== 'identifier',
+      (v) =>
+        !attributes.has(v) &&
+        v !== 'identifier' &&
+        v !== 'ref_from' &&
+        v !== 'ref_to',
     );
 
     if (extraFields.length > 0)

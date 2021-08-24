@@ -121,7 +121,7 @@ class Entity(ABC):
         namespace = entity_definition["namespace"]
         return ((namespace + ".") if namespace else "") + name
 
-    def serialize(self, encode_blobs=True) -> Dict:
+    def serialize(self, encode_blobs=True, include_schema=False) -> Dict:
         entity_definition = self.__class__.entity_definition()
         result = {}
         if self.identifier:
@@ -151,6 +151,9 @@ class Entity(ABC):
                 result["ref_from"] = self.ref_from.identifier
             else:
                 result["ref_from"] = self.ref_from
+
+        if include_schema:
+            result["__schema"] = self.get_namespace_name()
 
         return result
 
