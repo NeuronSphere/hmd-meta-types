@@ -1,0 +1,16 @@
+{
+  "identifier": "some-project-repo-identifier",
+  "name": "hmd-meta-types",
+  "description": "an example project",
+  "project_type": {
+    "identifier": "some-project-type-identifier",
+    "name": "microservice"
+  },
+  "build": {
+    "commands": [
+      [
+        "python"
+      ]
+    ]
+  }
+}
