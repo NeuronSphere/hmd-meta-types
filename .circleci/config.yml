@@ -6,9 +6,5 @@ orbs:
 workflows:
   main:
     jobs:
-      - hmd-orb-tools/build_repo:
+      - hmd-orb-tools/publish_python_and_typescript:
           context: docker_image_context
-          filters:
-            branches:
-              only:
-                - main
