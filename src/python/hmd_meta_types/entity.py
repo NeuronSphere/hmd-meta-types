@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import functools
 from collections import defaultdict
-from typing import Dict, Type, Any, Union
+from typing import Dict, Type, Any
 from datetime import datetime, timezone
 from dateutil.parser import isoparse
 from json import dumps, loads
@@ -221,7 +221,7 @@ class Noun(Entity):
 
 
 class Relationship(Entity):
-    def __init__(self, ref_from: Noun, ref_to: Noun, **kwargs):
+    def __init__(self, ref_from: str, ref_to: str, **kwargs):
         self.ref_from = ref_from
         self.ref_to = ref_to
         super().__init__(**kwargs)
@@ -237,35 +237,21 @@ class Relationship(Entity):
         pass
 
     @property
-    def ref_from(self) -> Union[Noun, str]:
+    def ref_from(self) -> str:
         return self._ref_from
 
     @ref_from.setter
-    def ref_from(self, value: Union[Noun, str]):
-        if not isinstance(value, self.__class__.ref_from_type()) and not isinstance(
-            value, str
-        ):
-            raise Exception(
-                f'From reference must be of type {self.__class__.ref_from_type().__name__} or str, got "{value}".'
-            )
+    def ref_from(self, value: str):
+        if not isinstance(value, str):
+            raise Exception(f'From reference must be of type str, got "{value}".')
         self._ref_from = value
-        if isinstance(value, Noun):
-            if self not in value.from_rels[self.__class__.get_namespace_name()]:
-                value.from_rels[self.__class__.get_namespace_name()].append(self)
 
     @property
-    def ref_to(self) -> Union[Noun, str]:
+    def ref_to(self) -> str:
         return self._ref_to
 
     @ref_to.setter
-    def ref_to(self, value: Union[Noun, str]):
-        if not isinstance(value, self.__class__.ref_to_type()) and not isinstance(
-            value, str
-        ):
-            raise Exception(
-                f"To reference must be of type {self.__class__.ref_to_type().__name__} or str."
-            )
+    def ref_to(self, value: str):
+        if not isinstance(value, str):
+            raise Exception(f'To reference must be of type str, got "{value}"')
         self._ref_to = value
-        if isinstance(value, Noun):
-            if self not in value.to_rels[self.__class__.get_namespace_name()]:
-                value.to_rels[self.__class__.get_namespace_name()].append(self)
