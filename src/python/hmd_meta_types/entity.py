@@ -7,6 +7,7 @@ from dateutil.parser import isoparse
 from json import dumps, loads
 from base64 import b64encode, b64decode
 from copy import deepcopy
+from jsonschema import validate, ValidationError
 
 type_mapping = {
     "integer": [int],
@@ -89,6 +90,14 @@ class Entity(ABC):
                         f"For field, {field_name}, expected a value of one of the types: {', '.join(valid_types)}, was \"{type(value).__name__}\""
                     )
                 value = get_value(field_definition, value)
+                if field_definition["type"] in ["mapping", "collection"]:
+                    if "schema" in field_definition:
+                        try:
+                            validate(value, field_definition["schema"])
+                        except ValidationError as ve:
+                            raise ValueError(
+                                f'Invalid value for field "{field_name}".'
+                            ) from ve
 
         setattr(self, f"_{field_name}", value)
 
