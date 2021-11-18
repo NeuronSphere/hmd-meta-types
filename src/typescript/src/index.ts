@@ -115,13 +115,22 @@ const validateAttributeValue = (
       `Invalid type for "${attr}", must be ${attribute.type}`,
     );
   }
+
+  const decodeJSONBlob = (value: string) => {
+    try {
+      return JSON.parse(value);
+    } catch (error) {
+      return JSON.parse(atob(value));
+    }
+  };
+
   if (attribute.type === 'collection') {
-    if (typeof value === 'string') value = atob(value);
+    if (typeof value === 'string') value = decodeJSONBlob(value);
     if (!Array.isArray(value))
       throw new Error(`Field, ${attr}, must be an array`);
   }
   if (attribute.type === 'mapping') {
-    if (typeof value === 'string') value = atob(value);
+    if (typeof value === 'string') value = decodeJSONBlob(value);
     if (typeof value !== 'object' || Array.isArray(value))
       throw new Error(`Field, ${attr}, must be an object`);
   }
@@ -476,5 +485,6 @@ export function relationshipFactory<
     refFrom,
     refTo,
   );
-  return relationship as Relationship<TFrom, TTo> & EntityType<EntitySchema>;
+  return relationship as Relationship<TFrom, TTo> &
+    EntityType<EntitySchema>;
 }
