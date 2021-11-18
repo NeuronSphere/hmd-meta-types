@@ -78,12 +78,11 @@ type EntityType<D extends EntitySchema> = {
   [Property in RequiredAttributeKeys<D>]: AttributeType<
     D['attributes'][Property]
   >;
-} &
-  {
-    [Property in NonRequiredAttributeKeys<D>]?: AttributeType<
-      D['attributes'][Property]
-    >;
-  };
+} & {
+  [Property in NonRequiredAttributeKeys<D>]?: AttributeType<
+    D['attributes'][Property]
+  >;
+};
 
 export type EntityData<D extends Entity> = EntityType<
   ReturnType<D['entityDefinition']>
@@ -472,6 +471,10 @@ export function relationshipFactory<
     }
   }
 
-  const noun: unknown = new GenericRelationship(obj, refFrom, refTo);
-  return noun as Noun & EntityType<EntitySchema>;
+  const relationship: unknown = new GenericRelationship(
+    obj,
+    refFrom,
+    refTo,
+  );
+  return relationship as Relationship<TFrom, TTo> & EntityType<EntitySchema>;
 }
