@@ -22,6 +22,7 @@ export interface AttributeDefintion {
   required?: boolean;
   description?: string;
   enum_def?: string[];
+  business_id?: boolean;
 }
 
 type EntityAttributes = { [k: string]: AttributeDefintion };
