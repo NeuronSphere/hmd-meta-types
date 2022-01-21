@@ -27,13 +27,13 @@ export interface AttributeDefintion {
 
 type EntityAttributes = { [k: string]: AttributeDefintion };
 
-type EntitySchemaExtenion = { [k: string]: any };
+type EntitySchemaExtension = { [k: string]: any };
 
 export type EntitySchema = {
   name: string;
   namespace: string;
   metatype: 'noun' | 'relationship';
-  extensions?: EntitySchemaExtenion;
+  extensions?: EntitySchemaExtension;
   attributes: EntityAttributes;
 };
 
