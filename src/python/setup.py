@@ -16,5 +16,5 @@ setup(
     license="unlicensed",
     packages=find_packages(),
     include_package_data=True,
-    install_requires=["jsonschema"],
+    install_requires=[],
 )
