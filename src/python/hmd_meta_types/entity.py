@@ -125,9 +125,13 @@ class Entity(ABC):
         pass
 
     @staticmethod
-    def get_namespace_name(entity_definition) -> str:
-        name = entity_definition["name"]
-        namespace = entity_definition["namespace"]
+    def get_namespace_name(entity_definition=None) -> str:
+        if entity_definition:
+            name = entity_definition["name"]
+            namespace = entity_definition["namespace"]
+        else:
+            name = "entity"
+            namespace = "hmd_meta_types"
         return ((namespace + ".") if namespace else "") + name
 
     def serialize(self, encode_blobs=True, include_schema=False) -> Dict:
