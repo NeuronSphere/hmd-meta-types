@@ -146,11 +146,11 @@ class Entity(ABC):
                     value = value.isoformat()
                 elif definition["type"] in ["collection", "mapping"]:
                     if encode_blobs:
-                        value = b64encode(dumps(value).encode(encoding="utf-8")).decode(
-                            "utf-8"
-                        )
+                        value = b64encode(
+                            dumps(value).encode(encoding="latin-1")
+                        ).decode("latin-1")
                 elif definition["type"] == "blob":
-                    value = b64encode(value).decode("utf-8")
+                    value = b64encode(value).decode("latin-1")
                 result[attr] = value
 
         if hasattr(self, "ref_to"):
@@ -182,10 +182,12 @@ class Entity(ABC):
                         result = isoparse(result)
                     elif field_def["type"] in ["mapping", "collection"]:
                         result = loads(
-                            b64decode(result.encode(encoding="utf-8")).decode("utf-8")
+                            b64decode(result.encode(encoding="latin-1")).decode(
+                                "latin-1"
+                            )
                         )
                     elif field_def["type"] == "blob":
-                        result = b64decode(result.encode(encoding="utf-8"))
+                        result = b64decode(result.encode(encoding="latin-1"))
                 new_data[attr] = result
 
         return entity_type(**new_data)
