@@ -26,6 +26,8 @@ class TestNoun:
                 "dictfield": dict_value,
                 "listfield": list_value,
                 "blobfield": bytes_value,
+                "_created": datetime.utcnow(),
+                "_updated": datetime.utcnow(),
             }
         )
         assert noun1.field1 == "hello"
@@ -48,10 +50,41 @@ class TestNoun:
                 "latin-1"
             ),
             "blobfield": b64encode(bytes_value).decode("latin-1"),
+            "_created": noun1._created.isoformat(),
+            "_updated": noun1._updated.isoformat(),
         }
 
         new_noun1 = Entity.deserialize(anoun, noun1.serialize())
         assert new_noun1 == noun1
+
+    def test_internal_fields(self, anoun):
+        datetime_value = datetime.now().astimezone()
+        dict_value = {"one": "two", "three": 4}
+        list_value = ["one", 2, 3.0]
+        bytes_value = "1234".encode("latin-1")
+        updated = datetime.now().astimezone(timezone(timedelta(hours=5)))
+        noun1 = anoun(
+            **{
+                "_updated": updated,
+                "_created": updated,
+                "field1": "hello",
+                "field2": 5,
+                "field3": "b",
+                "timestampfield": datetime_value,
+                "dictfield": dict_value,
+                "listfield": list_value,
+                "blobfield": bytes_value,
+            }
+        )
+        assert noun1._updated == updated
+        assert noun1._created == updated
+        assert noun1.field1 == "hello"
+        assert noun1.field2 == 5
+        assert noun1.field3 == "b"
+        assert noun1.timestampfield == datetime_value
+        assert noun1.dictfield == dict_value
+        assert noun1.listfield == list_value
+        assert noun1.blobfield == bytes_value
 
     def test_instance_type(self, anoun):
         noun1 = anoun(**{"field1": "hello", "field2": 5})

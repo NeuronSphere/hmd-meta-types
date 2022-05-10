@@ -4,7 +4,7 @@ from collections import defaultdict
 from copy import deepcopy
 from datetime import datetime, timezone
 from json import dumps, loads
-from typing import Dict, Type, Any
+from typing import Dict, Type, Any, List
 
 from dateutil.parser import isoparse
 from jsonschema import validate, ValidationError
@@ -14,11 +14,18 @@ type_mapping = {
     "string": [str],
     "float": [float],
     "enum": [str],
+    "bool": [bool],
     "timestamp": [datetime],
     "epoch": [int],
     "collection": [list],
     "mapping": [dict],
     "blob": [bytes],
+}
+
+internal_attributes = {
+    "identifier": {"type": "string"},
+    "_updated": {"type": "timestamp"},
+    "_created": {"type": "timestamp"},
 }
 
 
@@ -47,8 +54,9 @@ class Entity(ABC):
             ]
         )
         fields_present = set(kwargs.keys())
-        if "identifier" in fields_present:
-            fields_present.remove("identifier")
+        for fld in ["identifier", "_updated", "_created"]:
+            if fld in fields_present:
+                fields_present.remove(fld)
 
         # see if all required fields are present...
         required_fields_present = required_fields.intersection(fields_present)
@@ -66,6 +74,8 @@ class Entity(ABC):
 
     def _setter(self, field_name, value):
         field_definition = self.entity_definition()["attributes"].get(field_name)
+        if not field_definition:
+            field_definition = internal_attributes.get(field_name)
         if field_definition:
             if field_definition.get("required", False):
                 if value is None:
@@ -116,6 +126,22 @@ class Entity(ABC):
         self._setter("identifier", value)
 
     @property
+    def _updated(self) -> datetime:
+        return self._getter("_updated")
+
+    @_updated.setter
+    def _updated(self, value: datetime):
+        self._setter("_updated", value)
+
+    @property
+    def _created(self) -> datetime:
+        return self._getter("_created")
+
+    @_created.setter
+    def _created(self, value: datetime):
+        self._setter("_created", value)
+
+    @property
     def instance_type(self):
         return self.__class__
 
@@ -137,9 +163,9 @@ class Entity(ABC):
     def serialize(self, encode_blobs=True, include_schema=False) -> Dict:
         entity_definition = self.__class__.entity_definition()
         result = {}
-        if self.identifier:
-            result["identifier"] = self.identifier
-        for attr, definition in entity_definition.get("attributes", {}).items():
+        for attr, definition in (
+            entity_definition.get("attributes", {}) | internal_attributes
+        ).items():
             value = getattr(self, attr)
             if value is not None:
                 if isinstance(value, datetime):
@@ -174,7 +200,9 @@ class Entity(ABC):
     def deserialize(cls, entity_type, data: dict):
         entity_def = entity_type.entity_definition()
         new_data = deepcopy(data)
-        for attr, field_def in entity_def.get("attributes", {}).items():
+        for attr, field_def in (
+            entity_def.get("attributes", {}) | internal_attributes
+        ).items():
             if attr in new_data:
                 result = new_data[attr]
                 if result:
@@ -230,9 +258,9 @@ class Noun(Entity):
         super().__init__(**kwargs)
 
         # relationships for which this is the "to" noun
-        self.to_rels = defaultdict(list)  # type: Dict[str, List[Relationship]]
+        self.to_rels: Dict[str, List[Relationship]] = defaultdict(list)
         # relationships for which this is the "from" noun
-        self.from_rels = defaultdict(list)  # type: Dict[str, List[Relationship]]
+        self.from_rels: Dict[str, List[Relationship]] = defaultdict(list)
 
 
 class Relationship(Entity):
