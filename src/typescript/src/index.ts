@@ -355,7 +355,11 @@ export function nounFactory(
       );
 
     const extraFields = [...Array.from(objFields)].filter(
-      (v) => !attributes.has(v) && v !== 'identifier',
+      (v) =>
+        !attributes.has(v) &&
+        v !== 'identifier' &&
+        v !== '_updated' &&
+        v !== '_created',
     );
 
     if (extraFields.length > 0)
@@ -434,7 +438,9 @@ export function relationshipFactory<
         !attributes.has(v) &&
         v !== 'identifier' &&
         v !== 'ref_from' &&
-        v !== 'ref_to',
+        v !== 'ref_to' &&
+        v !== '_updated' &&
+        v !== '_created',
     );
 
     if (extraFields.length > 0)
