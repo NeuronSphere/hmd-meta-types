@@ -218,6 +218,9 @@ class Entity(ABC):
                         result = b64decode(result.encode(encoding="latin-1"))
                 new_data[attr] = result
 
+        if "__schema" in new_data:
+            del new_data["__schema"]
+
         return entity_type(**new_data)
 
     def set_equals(self, other):

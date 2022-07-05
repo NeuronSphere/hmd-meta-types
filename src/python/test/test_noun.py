@@ -157,3 +157,49 @@ class TestNoun:
         noun1.set_equals(noun2)
         assert noun1 is not noun2
         assert noun1 == noun2
+
+    def test_deserialize_with_schema_key(self, anoun):
+        datetime_value = datetime.now().astimezone()
+        dict_value = {"one": "two", "three": 4}
+        list_value = ["one", 2, 3.0]
+        bytes_value = "1234".encode("latin-1")
+        noun1 = anoun(
+            **{
+                "field1": "hello",
+                "field2": 5,
+                "field3": "b",
+                "timestampfield": datetime_value,
+                "dictfield": dict_value,
+                "listfield": list_value,
+                "blobfield": bytes_value,
+                "_created": datetime.utcnow(),
+                "_updated": datetime.utcnow(),
+            }
+        )
+        assert noun1.field1 == "hello"
+        assert noun1.field2 == 5
+        assert noun1.field3 == "b"
+        assert noun1.timestampfield == datetime_value
+        assert noun1.dictfield == dict_value
+        assert noun1.listfield == list_value
+        assert noun1.blobfield == bytes_value
+
+        assert noun1.serialize(include_schema=True) == {
+            "field1": "hello",
+            "field2": 5,
+            "field3": "b",
+            "timestampfield": datetime_value.astimezone(timezone.utc).isoformat(),
+            "dictfield": b64encode(dumps(dict_value).encode("latin-1")).decode(
+                "latin-1"
+            ),
+            "listfield": b64encode(dumps(list_value).encode("latin-1")).decode(
+                "latin-1"
+            ),
+            "blobfield": b64encode(bytes_value).decode("latin-1"),
+            "_created": noun1._created.isoformat(),
+            "_updated": noun1._updated.isoformat(),
+            "__schema": anoun.get_namespace_name(),
+        }
+
+        new_noun1 = Entity.deserialize(anoun, noun1.serialize())
+        assert new_noun1 == noun1
