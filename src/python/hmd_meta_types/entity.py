@@ -54,7 +54,7 @@ class Entity(ABC):
             ]
         )
         fields_present = set(kwargs.keys())
-        for fld in ["identifier", "_updated", "_created"]:
+        for fld in ["identifier", "_updated", "_created", "__schema"]:
             if fld in fields_present:
                 fields_present.remove(fld)
 
