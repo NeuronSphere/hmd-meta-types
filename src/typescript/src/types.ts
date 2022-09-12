@@ -283,8 +283,8 @@ export abstract class Noun extends Entity {
 }
 
 export abstract class Relationship<
-  TFrom extends string | Noun = string,
-  TTo extends string | Noun = string,
+  TFrom extends string | Entity = string,
+  TTo extends string | Entity = string,
 > extends Entity {
   private _ref_from?: TFrom;
   private _ref_to?: TTo;
