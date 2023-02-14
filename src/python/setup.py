@@ -13,7 +13,7 @@ setup(
     description="Base classes and framework for representing HMD type definitions of basic metatypes in code.",
     author="Alex Burgoon",
     author_email="alex.burgoon@hmdlabs.io",
-    license="unlicensed",
+    license="Apache 2.0",
     packages=find_packages(),
     include_package_data=True,
     install_requires=[],

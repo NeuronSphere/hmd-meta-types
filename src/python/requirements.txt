@@ -8,10 +8,10 @@
 attrs==21.4.0
     # via jsonschema
 jsonschema==4.4.0
-    # via -r /Users/jimmajure/hmd_repo_home/hmd-meta-types/src/python/requirements.in
+    # via -r /tmp/hmd-meta-types/src/python/requirements.in
 pyrsistent==0.18.1
     # via jsonschema
 python-dateutil==2.8.2
-    # via -r /Users/jimmajure/hmd_repo_home/hmd-meta-types/src/python/requirements.in
+    # via -r /tmp/hmd-meta-types/src/python/requirements.in
 six==1.16.0
     # via python-dateutil
