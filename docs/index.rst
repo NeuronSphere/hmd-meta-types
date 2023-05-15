@@ -256,7 +256,7 @@ The output from this is:
    :caption: Contents:
 
 
-Indices and tables
+Indexes and tables
 ==================
 
 * :ref:`genindex`
