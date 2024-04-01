@@ -179,16 +179,13 @@ class Entity(ABC):
                     value = b64encode(value).decode("latin-1")
                 result[attr] = value
 
-        if hasattr(self, "ref_to") and entity_definition["metatype"] == "relationship":
+        if hasattr(self, "ref_to") and hasattr(self, "ref_to_type"):
             if isinstance(self.ref_to, self.ref_to_type()):
                 result["ref_to"] = self.ref_to.identifier
             else:
                 result["ref_to"] = self.ref_to
 
-        if (
-            hasattr(self, "ref_from")
-            and entity_definition["metatype"] == "relationship"
-        ):
+        if hasattr(self, "ref_from") and hasattr(self, "ref_to_type"):
             if isinstance(self.ref_from, self.ref_from_type()):
                 result["ref_from"] = self.ref_from.identifier
             else:
