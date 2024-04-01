@@ -185,7 +185,7 @@ class Entity(ABC):
             else:
                 result["ref_to"] = self.ref_to
 
-        if hasattr(self, "ref_from") and hasattr(self, "ref_to_type"):
+        if hasattr(self, "ref_from") and hasattr(self, "ref_from_type"):
             if isinstance(self.ref_from, self.ref_from_type()):
                 result["ref_from"] = self.ref_from.identifier
             else:
