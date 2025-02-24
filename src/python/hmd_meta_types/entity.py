@@ -4,6 +4,7 @@ from collections import defaultdict
 from copy import deepcopy
 from datetime import datetime, timezone
 from json import dumps, loads
+import re
 from typing import Dict, Type, Any, List
 
 from dateutil.parser import isoparse
@@ -29,8 +30,36 @@ internal_attributes = {
 }
 
 
+class ValidationException(Exception):
+    def __init__(self, attr: Dict, value: Any, *args):
+        super().__init__(f"Validation error on {value} for type {attr['type']}", *args)
+
+
 def get_value(field_def: Dict, value: Any):
     result = value
+    validation = field_def.get("validation")
+    if validation is not None:
+        if field_def["type"] == "string":
+            for k, v in validation.items():
+                if k == "datetime":
+                    try:
+                        datetime.strptime(value, v)
+                    except ValueError:
+                        raise ValidationException(field_def, value)
+                elif k == "regex":
+                    regex = re.compile(v)
+                    match = re.match(regex, value)
+                    if not match:
+                        raise ValidationException(field_def, value)
+        elif field_def["type"] == "integer" or field_def["type"] == "float":
+            for k, v in validation.items():
+                if k == "max":
+                    if value > v:
+                        raise ValidationException(field_def, value)
+                elif k == "min":
+                    if value < v:
+                        raise ValidationException(field_def, value)
+
     if field_def["type"] == "timestamp":
         if result and result.tzinfo and result.tzinfo.utcoffset(result):
             # we have a timzone aware object. make sure its in utc...

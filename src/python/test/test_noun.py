@@ -6,6 +6,7 @@ from json import dumps
 from base64 import b64encode, b64decode
 from dateutil.parser import isoparse
 from hmd_meta_types import Entity
+from hmd_meta_types.entity import ValidationException
 
 
 class TestNoun:
@@ -203,3 +204,60 @@ class TestNoun:
 
         new_noun1 = Entity.deserialize(anoun, noun1.serialize())
         assert new_noun1 == noun1
+
+    def test_attr_validation(self, validation_noun, validation_rel):
+        valid_date_str = "2024-02-24"
+        valid_time_str = "09:25:03"
+        valid_regex_str = "foo-BAR"
+        valid_int = 25
+        datetime_value = datetime.now().astimezone()
+        dict_value = {"one": "two", "three": 4}
+        list_value = ["one", 2, 3.0]
+        bytes_value = "1234".encode("latin-1")
+
+        valid_noun = validation_noun(
+            **{
+                "date_str": valid_date_str,
+                "time_str": valid_time_str,
+                "regex_str": valid_regex_str,
+                "field2": valid_int,
+                "field3": "b",
+                "timestampfield": datetime_value,
+                "dictfield": dict_value,
+                "listfield": list_value,
+                "blobfield": bytes_value,
+                "_created": datetime.utcnow(),
+                "_updated": datetime.utcnow(),
+            }
+        )
+
+        assert valid_noun.date_str == valid_date_str
+        assert valid_noun.time_str == valid_time_str
+        assert valid_noun.regex_str == valid_regex_str
+        assert valid_noun.field2 == valid_int
+
+        invalid_date_str = "20240224"
+        invalid_time_str = "09-25:03.333"
+        invalid_regex_str = "Foo-BAR"
+        invalid_int = 5
+        datetime_value = datetime.now().astimezone()
+        dict_value = {"one": "two", "three": 4}
+        list_value = ["one", 2, 3.0]
+        bytes_value = "1234".encode("latin-1")
+
+        with pytest.raises(ValidationException):
+            valid_noun = validation_noun(
+                **{
+                    "date_str": invalid_date_str,
+                    "time_str": invalid_time_str,
+                    "regex_str": invalid_regex_str,
+                    "field2": invalid_int,
+                    "field3": "b",
+                    "timestampfield": datetime_value,
+                    "dictfield": dict_value,
+                    "listfield": list_value,
+                    "blobfield": bytes_value,
+                    "_created": datetime.utcnow(),
+                    "_updated": datetime.utcnow(),
+                }
+            )

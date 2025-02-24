@@ -177,6 +177,20 @@ to store and retrieve field data, respectively.
 The ``Entity._setter`` method does runtime type checking to verify the data being stored and
 fails if a field marked as required is set to ``None``.
 
+Property Validation
+++++++++++++++++++++++++++++++
+
+Additional validation properties can be set on an attribute definition.
+Validation options for strings are:
+
+* Regex: match a regex expression
+* Datetime: match a python date/time formatted string
+
+Validation optoins for integers and floats are:
+
+* Max: maximum allowed number
+* Min: minimum allowed number
+
 Serialization Support
 +++++++++++++++++++++
 
