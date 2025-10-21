@@ -255,7 +255,7 @@ class Entity(ABC):
     def set_equals(self, other):
         entity_def = self.__class__.entity_definition()
         if isinstance(other, self.__class__):
-            attributes_to_copy = internal_attributes.keys()
+            attributes_to_copy = list(internal_attributes.keys())
             if hasattr(self, "ref_to"):
                 attributes_to_copy += ["ref_from", "ref_to"]
             attributes_to_copy += [
@@ -267,7 +267,7 @@ class Entity(ABC):
 
     def __eq__(self, other):
         entity_def = self.__class__.entity_definition()
-        attributes_to_compare = internal_attributes.keys()
+        attributes_to_compare = list(internal_attributes.keys())
         if hasattr(self, "ref_to"):
             attributes_to_compare += ["ref_from", "ref_to"]
         attributes_to_compare += [
