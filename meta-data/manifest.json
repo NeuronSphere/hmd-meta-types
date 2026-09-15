@@ -15,5 +15,52 @@
         "typescript"
       ]
     ]
+  },
+  "discovery": {
+    "summary": "hmd-meta-types is a foundational library providing the base classes and runtime for HMD's meta-type system: entities generated from .hms type definition schema files. It ships parallel Python and TypeScript implementations of the Entity/Noun/Relationship class hierarchy, giving generated entity classes common functionality (runtime attribute type checking, serialization/deserialization to/from JSON, identifier handling, equality and hashing) regardless of how the definition file was loaded. An Extension/operation decorator mechanism lets runtime-specific behavior be merged into generated classes. It is depended on by persistence and service layers across NeuronSphere rather than run standalone.",
+    "entry_points": [
+      {
+        "path": "src/python/hmd_meta_types/entity.py",
+        "description": "Python implementation of the Entity/Noun/Relationship base classes: attribute validation, serialize/deserialize, equality/hashing."
+      },
+      {
+        "path": "src/typescript/src/types.ts",
+        "description": "TypeScript implementation of Entity/Noun/Relationship, mirroring the Python base classes and factories."
+      },
+      {
+        "path": "docs/index.rst",
+        "description": "Overview and worked example of how a generated entity class (e.g. from hmd-lang-* schema) extends these base classes."
+      },
+      {
+        "path": "src/python/hmd_meta_types/__init__.py",
+        "description": "Public Python package exports: Entity, Noun, Relationship."
+      }
+    ],
+    "capabilities": [
+      {
+        "name": "Entity",
+        "kind": "class",
+        "description": "Abstract root base class: attribute validation, serialize()/deserialize(), identifier, equality and hashing.",
+        "location": "src/python/hmd_meta_types/entity.py:71"
+      },
+      {
+        "name": "Noun",
+        "kind": "class",
+        "description": "Base class for hmd nouns; caches associated to/from relationship instances.",
+        "location": "src/python/hmd_meta_types/entity.py:288"
+      },
+      {
+        "name": "Relationship",
+        "kind": "class",
+        "description": "Base class for hmd relationships linking two noun instances via ref_from/ref_to.",
+        "location": "src/python/hmd_meta_types/entity.py:298"
+      }
+    ],
+    "related_docs": [
+      {
+        "title": "Overview",
+        "path": "docs/index.rst"
+      }
+    ]
   }
 }
