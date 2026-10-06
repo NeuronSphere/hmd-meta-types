@@ -51,7 +51,7 @@ class TestRel:
             rel1 = arel(
                 ref_from=noun1.identifier,
                 ref_to=noun2.identifier,
-                **{"field1": 5, "field2": 5, "field3": "b"}
+                **{"field1": 5, "field2": 5, "field3": "b"},
             )
 
     def test_required_args(self, arel, anoun):
@@ -78,7 +78,7 @@ class TestRel:
         rel1 = arel(
             ref_from=noun1.identifier,
             ref_to=noun2.identifier,
-            **{"field1": "hello", "field2": 5, "field3": "b"}
+            **{"field1": "hello", "field2": 5, "field3": "b"},
         )
         assert rel1.field1 == "hello"
         assert noun1.field2 == 5

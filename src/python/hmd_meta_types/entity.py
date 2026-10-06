@@ -115,7 +115,7 @@ class Entity(ABC):
                 if field_definition["type"] == "enum":
                     if value not in field_definition["enum_def"]:
                         raise Exception(
-                            f"For field, {field_name}, expected one of {field_definition['enum_def']}, was \"{value}\""
+                            f'For field, {field_name}, expected one of {field_definition["enum_def"]}, was "{value}"'
                         )
                 elif not any(
                     isinstance(value, a_type)
@@ -126,7 +126,7 @@ class Entity(ABC):
                         for a_type in type_mapping[field_definition["type"]]
                     ]
                     raise TypeError(
-                        f"For field, {field_name}, expected a value of one of the types: {', '.join(valid_types)}, was \"{type(value).__name__}\""
+                        f'For field, {field_name}, expected a value of one of the types: {", ".join(valid_types)}, was "{type(value).__name__}"'
                     )
                 value = get_value(field_definition, value)
                 if field_definition["type"] in ["mapping", "collection"]:
