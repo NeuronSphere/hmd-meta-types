@@ -1,0 +1,75 @@
+@startuml
+
+package "Curated Nouns" {
+component case as "Case"
+component device
+component device_component
+device <-> device_component
+component date
+component data_stream_one as "Table 1"
+component data_stream_two as "Table 2"
+component data_stream_three as "Table 3"
+date --> device
+device --> case
+device_component --> data_stream_two
+note "Runspan is the general type, presented with a Type Enum\nthat points to physical files with timespan bounds\nproviding the same abstractions into tables" as runspan_note
+case .. runspan_note
+}
+
+package "configuration_instances" {
+        package "hmd_std_tabular_mappings" {
+        component standard_linux_log_mapping
+        component standard_http_log_mapping
+    }
+
+    package "cust_device_1_mappings" {
+        component cust_telem_tabular_mapping
+        component cust_json_type_1
+        component cust_regex_type_1
+    }
+}
+
+package "cust_librarian_1" {
+    component cust_sw_telemetry_type_1
+    component cust_json_stream_type_2
+    component cust_vendor_component_logs_type_3
+    component http_device_logs
+    component linux_device_logs
+    component p_location as "Root Location"
+    component date_partition_spec as "Date Partition Spec"
+    component device_partition_spec as "Device Partition Spec"
+    p_location --> date_partition_spec
+    date_partition_spec --> device_partition_spec
+    device_partition_spec --> cust_sw_telemetry_type_1
+    device_partition_spec --> cust_json_stream_type_2
+    device_partition_spec --> cust_vendor_component_logs_type_3
+    device_partition_spec --> http_device_logs
+    device_partition_spec --> linux_device_logs
+}
+
+package operations {
+    component account
+    component librarians
+    account --* librarians
+}
+
+librarians --> cust_librarian_1
+
+case <--> cust_sw_telemetry_type_1
+case <--> cust_json_stream_type_2
+case <--> cust_vendor_component_logs_type_3
+case <--> http_device_logs
+case <--> linux_device_logs
+
+case --> data_stream_one
+data_stream_one --> standard_http_log_mapping
+standard_http_log_mapping ---> http_device_logs
+
+case --> data_stream_two
+data_stream_two --> standard_linux_log_mapping
+standard_linux_log_mapping ---> linux_device_logs
+
+case --> data_stream_three
+data_stream_three --> cust_telem_tabular_mapping
+cust_telem_tabular_mapping --> cust_sw_telemetry_type_1
+@enduml
