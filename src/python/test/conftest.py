@@ -390,3 +390,10 @@ def validation_rel():
             self._setter(field_name="blobfield", value=value)
 
     return ValidationRel
+
+
+def pytest_configure(config):
+    config.addinivalue_line(
+        "markers",
+        "baseline: a test that existed before the Go port began; the conformance floor. Never add it to new tests.",
+    )

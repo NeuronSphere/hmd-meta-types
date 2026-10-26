@@ -3,6 +3,8 @@ import re
 import pytest
 from hmd_meta_types import Entity
 
+pytestmark = pytest.mark.baseline
+
 
 class TestRel:
     def test_okay(self, arel, anoun):

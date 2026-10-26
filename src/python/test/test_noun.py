@@ -8,6 +8,8 @@ from dateutil.parser import isoparse
 from hmd_meta_types import Entity
 from hmd_meta_types.entity import ValidationException
 
+pytestmark = pytest.mark.baseline
+
 
 class TestNoun:
     def test_namespace_name(self, anoun):

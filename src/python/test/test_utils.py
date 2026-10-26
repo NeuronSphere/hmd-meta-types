@@ -3,6 +3,9 @@ import json
 from unittest.mock import patch, MagicMock
 
 from hmd_meta_types.utils import load_definition, load_definition_file, snake_to_pascal
+import pytest
+
+pytestmark = pytest.mark.baseline
 
 
 class TestBaseUtils:
