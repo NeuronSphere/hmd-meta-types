@@ -32,4 +32,4 @@ Concerns with the current Python behavior are listed in :doc:`../known_issues`.
     ``pytest -m baseline``: 18 tests in ``test_noun.py``,
     ``test_relationship.py`` and ``test_utils.py``. The TypeScript
     implementation's 29 Jest tests are not part of this floor
-    (:ref:`HMD_META_TYPES_ISSUE_010`).
+    (:need:`HMD_META_TYPES_ISSUE_010`).

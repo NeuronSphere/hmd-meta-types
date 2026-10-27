@@ -42,5 +42,5 @@ Deserialization
     string ``""`` to empty bytes (``b""``), so ``b""`` serializes to ``""`` and
     reads back unchanged. Until 2026-10-27 Python skipped decoding the falsy
     ``""`` and rejected it as a ``str``, answering HTTP 500 in services
-    (:ref:`HMD_META_TYPES_ISSUE_001`). The corpus case ``blob_empty`` pins it for
+    (:need:`HMD_META_TYPES_ISSUE_001`). The corpus case ``blob_empty`` pins it for
     Go; ``src/python/test/test_blob.py`` and ``test_corpus.py`` pin it for Python.

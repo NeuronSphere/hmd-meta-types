@@ -75,7 +75,51 @@
           "needs_id_regex": "^HMD_[A-Z0-9_]+$",
           "needs_warnings": {
             "requirement_without_test": "type == 'req' and '_REQ_' in id and not links_back and 'trace-exempt' not in tags"
-          }
+          },
+          "needs_types": [
+            {
+              "directive": "req",
+              "title": "Requirement",
+              "prefix": "R_",
+              "color": "#BFD8D2",
+              "style": "node"
+            },
+            {
+              "directive": "spec",
+              "title": "Specification",
+              "prefix": "S_",
+              "color": "#FEDCD2",
+              "style": "node"
+            },
+            {
+              "directive": "impl",
+              "title": "Implementation",
+              "prefix": "I_",
+              "color": "#DF744A",
+              "style": "node"
+            },
+            {
+              "directive": "test",
+              "title": "Test Case",
+              "prefix": "T_",
+              "color": "#DCB239",
+              "style": "node"
+            },
+            {
+              "directive": "need",
+              "title": "Need",
+              "prefix": "N_",
+              "color": "#9856a5",
+              "style": "node"
+            },
+            {
+              "directive": "issue",
+              "title": "Known issue",
+              "prefix": "ISSUE_",
+              "color": "#F4C7C3",
+              "style": "node"
+            }
+          ]
         }
       }
     }
