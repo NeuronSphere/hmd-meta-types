@@ -434,8 +434,11 @@ func DeserializeValue(def *Definition, data pyjson.Value) (*Entity, error) {
 			continue
 		}
 		raw := kwargs[i].val.(pyjson.Value)
-		if !raw.Truthy() {
-			continue // Python's `if result:` leaves falsy values as they are
+		// Python's `if result:` leaves falsy values as they are, except the empty
+		// string of a blob, which is base64 for b"" (HMD_META_TYPES_ISSUE_001).
+		emptyBlob := attr.Type == "blob" && raw.Kind() == pyjson.String
+		if !raw.Truthy() && !emptyBlob {
+			continue
 		}
 		switch attr.Type {
 		case "timestamp":
@@ -467,6 +470,9 @@ func DeserializeValue(def *Definition, data pyjson.Value) (*Entity, error) {
 			b, err := pyB64Decode(raw.Str())
 			if err != nil {
 				return nil, wrapErr(CatDecode, attr.Name, err)
+			}
+			if b == nil {
+				b = []byte{} // b"", not None
 			}
 			kwargs[i].val = b
 		}

@@ -171,7 +171,7 @@ case("blob_canonical", A, '{"payload": "QUJD"}')
 case("blob_high_bytes", A, '{"payload": "/w=="}')
 case("blob_junk_chars", A, '{"payload": "QU JD!"}')
 case("blob_bad_padding", A, '{"payload": "QUI"}')
-case("blob_empty_rejected", A, '{"payload": ""}')
+case("blob_empty", A, '{"payload": ""}')
 case("blob_number", A, '{"payload": 5}')
 
 # collections and mappings

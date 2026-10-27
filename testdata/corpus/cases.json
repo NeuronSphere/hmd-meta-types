@@ -616,7 +616,7 @@
     "input": "{\"payload\": \"QUI\"}"
   },
   {
-    "name": "blob_empty_rejected",
+    "name": "blob_empty",
     "entity": "all_types",
     "include_schema": false,
     "encode_blobs": true,

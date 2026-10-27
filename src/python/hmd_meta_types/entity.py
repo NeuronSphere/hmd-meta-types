@@ -234,7 +234,10 @@ class Entity(ABC):
         ).items():
             if attr in new_data:
                 result = new_data[attr]
-                if result:
+                # An empty blob serializes to "", which is falsy but still base64
+                # for b"". Decode it, or b"" comes back as the str "" and the
+                # setter rejects it (HMD_META_TYPES_ISSUE_001).
+                if result or (field_def["type"] == "blob" and result == ""):
                     if field_def["type"] == "timestamp":
                         result = isoparse(result)
                     elif field_def["type"] in ["mapping", "collection"]:
