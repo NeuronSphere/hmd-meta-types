@@ -62,5 +62,22 @@
         "path": "docs/index.rst"
       }
     ]
+  },
+  "bartleby": {
+    "roots": {
+      "index": {
+        "root_doc": "index",
+        "builders": [
+          "html",
+          "pdf"
+        ],
+        "config": {
+          "needs_id_regex": "^HMD_[A-Z0-9_]+$",
+          "needs_warnings": {
+            "requirement_without_test": "type == 'req' and '_REQ_' in id and not links_back and 'trace-exempt' not in tags"
+          }
+        }
+      }
+    }
   }
 }

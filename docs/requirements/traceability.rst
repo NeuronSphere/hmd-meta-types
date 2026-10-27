@@ -16,7 +16,7 @@ generated from those declarations.
 Summary
 -------
 
-24 requirement items, verified by 14 Go tests and 0 Robot tests.
+27 requirement items, verified by 14 Go tests and 0 Robot tests.
 
 .. list-table::
    :header-rows: 1
@@ -35,8 +35,8 @@ Summary
      - 4
      - 0
    * - DES
-     - 3
-     - 6
+     - 4
+     - 7
      - 0
    * - DIFF
      - 3
@@ -46,6 +46,10 @@ Summary
      - 1
      - 1
      - 0
+   * - PY
+     - 2
+     - 0
+     - 2
    * - SER
      - 6
      - 10
@@ -89,6 +93,9 @@ Coverage by requirement
    * - :need:`HMD_META_TYPES_REQ_DES_003`
      - metatypes.TestPyB64Decode, metatypes_test.TestCorpusRoundTripFromSchemas
      - implemented
+   * - :need:`HMD_META_TYPES_REQ_DES_004`
+     - metatypes_test.TestCorpusRoundTripFromSchemas
+     - implemented
    * - :need:`HMD_META_TYPES_REQ_DIFF_001`
      - metatypes.TestRegexIsRE2
      - implemented
@@ -100,6 +107,12 @@ Coverage by requirement
      - implemented
    * - :need:`HMD_META_TYPES_REQ_ERR_001`
      - metatypes_test.TestCorpusRoundTripFromSchemas
+     - implemented
+   * - :need:`HMD_META_TYPES_REQ_PY_001`
+     - *exempt: see the requirement text*
+     - implemented
+   * - :need:`HMD_META_TYPES_REQ_PY_002`
+     - *exempt: see the requirement text*
      - implemented
    * - :need:`HMD_META_TYPES_REQ_SER_001`
      - metatypes_test.TestCorpusRoundTripFromSchemas, metatypes_test.TestGeneratedTypedAccessors
@@ -218,7 +231,7 @@ Run with ``make test``. No Docker required.
 
 .. test:: metatypes_test.TestCorpusRoundTripFromSchemas
     :id: HMD_META_TYPES_TEST_GO_B8355147
-    :links: HMD_META_TYPES_REQ_CORPUS_001, HMD_META_TYPES_REQ_DEF_001, HMD_META_TYPES_REQ_DES_001, HMD_META_TYPES_REQ_DES_002, HMD_META_TYPES_REQ_DES_003, HMD_META_TYPES_REQ_ERR_001, HMD_META_TYPES_REQ_SER_001, HMD_META_TYPES_REQ_SER_002, HMD_META_TYPES_REQ_SER_003, HMD_META_TYPES_REQ_SER_004, HMD_META_TYPES_REQ_SER_005, HMD_META_TYPES_REQ_SET_001, HMD_META_TYPES_REQ_SET_002, HMD_META_TYPES_REQ_SET_003, HMD_META_TYPES_REQ_SET_004, HMD_META_TYPES_REQ_SET_005, HMD_META_TYPES_REQ_SET_006
+    :links: HMD_META_TYPES_REQ_CORPUS_001, HMD_META_TYPES_REQ_DEF_001, HMD_META_TYPES_REQ_DES_001, HMD_META_TYPES_REQ_DES_002, HMD_META_TYPES_REQ_DES_003, HMD_META_TYPES_REQ_DES_004, HMD_META_TYPES_REQ_ERR_001, HMD_META_TYPES_REQ_SER_001, HMD_META_TYPES_REQ_SER_002, HMD_META_TYPES_REQ_SER_003, HMD_META_TYPES_REQ_SER_004, HMD_META_TYPES_REQ_SER_005, HMD_META_TYPES_REQ_SET_001, HMD_META_TYPES_REQ_SET_002, HMD_META_TYPES_REQ_SET_003, HMD_META_TYPES_REQ_SET_004, HMD_META_TYPES_REQ_SET_005, HMD_META_TYPES_REQ_SET_006
     :tags: go
 
     ``src/go/metatypes/corpus_test.go:119``

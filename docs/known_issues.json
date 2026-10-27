@@ -1,0 +1,103 @@
+[
+  {
+    "id": "HMD_META_TYPES_ISSUE_001",
+    "title": "An empty blob did not round-trip",
+    "body_markdown": "**Summary.** `Entity.deserialize` decoded only truthy values, so the `\"\"` that `b\"\"` serializes to reached the setter as the `str` `\"\"` and was rejected with `TypeError`.\n\n**Where.**\n- [`src/python/hmd_meta_types/entity.py:236-241`](https://github.com/NeuronSphere/hmd-meta-types/blob/77767d1bd2952a3a399119329eef5129445c2987/src/python/hmd_meta_types/entity.py#L236-L241) — deserialize, now fixed\n- [`src/go/metatypes/entity.go`](https://github.com/NeuronSphere/hmd-meta-types/blob/77767d1bd2952a3a399119329eef5129445c2987/src/go/metatypes/entity.go) — Go mirrored it and was fixed with it\n\n**Impact.** Any service storing an empty blob answered HTTP 500 on read; seen on every engine (Postgres, Gremlin, DynamoDB).\n\n**Found by.** hmd-entity-storage conformance test TYPES_010, 2026-10-27; the corpus pinned it as `blob_empty_rejected`.\n\n**Status.** fixed in 77767d1\n\n**Recommendation.** None further. `HMD_META_TYPES_REQ_DES_004` and `test_blob.py` keep it fixed.\n\nTracked in `docs/known_issues.rst` as `HMD_META_TYPES_ISSUE_001` in NeuronSphere/hmd-meta-types.",
+    "labels": [
+      "known-issue",
+      "bug",
+      "fixed"
+    ],
+    "status": "fixed in 77767d1"
+  },
+  {
+    "id": "HMD_META_TYPES_ISSUE_002",
+    "title": "An unknown attribute type is accepted until a value is set",
+    "body_markdown": "**Summary.** The setter looks up `type_mapping[field_definition[\"type\"]]` only when a non-null value is set, so a definition with a type that does not exist (`int`, `boolean`) loads, accepts `null`, and then raises a bare `KeyError` on the first real value.\n\n**Where.**\n- [`src/python/hmd_meta_types/entity.py:120-130`](https://github.com/NeuronSphere/hmd-meta-types/blob/77767d1bd2952a3a399119329eef5129445c2987/src/python/hmd_meta_types/entity.py#L120-L130) — setter type lookup\n- [`src/python/hmd_meta_types/entity.py:13-24`](https://github.com/NeuronSphere/hmd-meta-types/blob/77767d1bd2952a3a399119329eef5129445c2987/src/python/hmd_meta_types/entity.py#L13-L24) — type_mapping\n\n**Impact.** A typo in a lang pack's `.hms` ships unnoticed and fails at runtime with an unhelpful error. Two real lang packs had it: `int` in 8 places in hmd-lang-mesh-proto, `boolean` in hmd-lang-telemetry-debug (both fixed 2026-10-26 in 44ef304 and b9fecc6).\n\n**Found by.** NERD005 phase 2 corpus (cases `bad_int_type`, `bad_boolean_type`, `bad_null_skips_type`).\n\n**Status.** open\n\n**Recommendation.** Validate every attribute type when a definition is loaded (here or in hmd-schema-loader) and fail with the attribute and type named; add a lint to vocabgen. Change Go and the corpus goldens in the same commit.\n\nTracked in `docs/known_issues.rst` as `HMD_META_TYPES_ISSUE_002` in NeuronSphere/hmd-meta-types.",
+    "labels": [
+      "known-issue"
+    ],
+    "status": "open"
+  },
+  {
+    "id": "HMD_META_TYPES_ISSUE_003",
+    "title": "bool is accepted as an integer and epoch",
+    "body_markdown": "**Summary.** `type_mapping` maps `integer` and `epoch` to `int`, and `bool` is a subclass of `int` in Python, so `true` is a valid integer and passes `min`/`max` validation as 1.\n\n**Where.**\n- [`src/python/hmd_meta_types/entity.py:14-20`](https://github.com/NeuronSphere/hmd-meta-types/blob/77767d1bd2952a3a399119329eef5129445c2987/src/python/hmd_meta_types/entity.py#L14-L20) — type_mapping\n- [`src/python/hmd_meta_types/entity.py:54-61`](https://github.com/NeuronSphere/hmd-meta-types/blob/77767d1bd2952a3a399119329eef5129445c2987/src/python/hmd_meta_types/entity.py#L54-L61) — min/max\n\n**Impact.** Wrongly typed client input is stored silently and reads back as `true`, not a number.\n\n**Found by.** NERD005 phase 2 corpus (`int_bool_accepted`, `val_score_bool`).\n\n**Status.** open\n\n**Recommendation.** Reject `bool` for integer and epoch (`type(value) is int`). Behavior change: check producers first.\n\nTracked in `docs/known_issues.rst` as `HMD_META_TYPES_ISSUE_003` in NeuronSphere/hmd-meta-types.",
+    "labels": [
+      "known-issue"
+    ],
+    "status": "open"
+  },
+  {
+    "id": "HMD_META_TYPES_ISSUE_004",
+    "title": "regex validation matches only a prefix",
+    "body_markdown": "**Summary.** `validation.regex` uses `re.match`, which anchors at the start but not the end, so `ABC-12x` passes `[A-Z]{3}-[0-9]+`.\n\n**Where.**\n- [`src/python/hmd_meta_types/entity.py:49-53`](https://github.com/NeuronSphere/hmd-meta-types/blob/77767d1bd2952a3a399119329eef5129445c2987/src/python/hmd_meta_types/entity.py#L49-L53) — regex validation\n\n**Impact.** Values that only start with a valid pattern pass validation. Schema authors almost certainly expect a full match.\n\n**Found by.** NERD005 phase 2 corpus (`val_regex_prefix_match`).\n\n**Status.** open\n\n**Recommendation.** Use `re.fullmatch` in Python and an end-anchored pattern in Go, after checking existing lang packs' patterns (none use `regex` as of 2026-10-26).\n\nTracked in `docs/known_issues.rst` as `HMD_META_TYPES_ISSUE_004` in NeuronSphere/hmd-meta-types.",
+    "labels": [
+      "known-issue"
+    ],
+    "status": "open"
+  },
+  {
+    "id": "HMD_META_TYPES_ISSUE_005",
+    "title": "NaN and Infinity are accepted and serialized as non-standard JSON",
+    "body_markdown": "**Summary.** A float attribute accepts `NaN` and `±Infinity`; `NaN` passes `min`/`max` (every comparison is false), and `json.dumps` writes the bare tokens `NaN`/`Infinity`, which are not JSON.\n\n**Where.**\n- [`src/python/hmd_meta_types/entity.py:54-61`](https://github.com/NeuronSphere/hmd-meta-types/blob/77767d1bd2952a3a399119329eef5129445c2987/src/python/hmd_meta_types/entity.py#L54-L61) — min/max\n- [`src/python/hmd_meta_types/entity.py:16`](https://github.com/NeuronSphere/hmd-meta-types/blob/77767d1bd2952a3a399119329eef5129445c2987/src/python/hmd_meta_types/entity.py#L16) — float type\n\n**Impact.** Other consumers (the TypeScript client, Postgres JSONB, most JSON parsers) reject the payload; a range-validated field can hold NaN.\n\n**Found by.** NERD005 phase 2 corpus (`float_nan`, `float_inf`, `val_weight_nan`).\n\n**Status.** open\n\n**Recommendation.** Reject non-finite floats in the setter, or decide and document an encoding. Go mirrors today's behavior via its pyjson package.\n\nTracked in `docs/known_issues.rst` as `HMD_META_TYPES_ISSUE_005` in NeuronSphere/hmd-meta-types.",
+    "labels": [
+      "known-issue"
+    ],
+    "status": "open"
+  },
+  {
+    "id": "HMD_META_TYPES_ISSUE_006",
+    "title": "Timezone-naive timestamps are accepted and kept naive",
+    "body_markdown": "**Summary.** The timestamp normalization converts only aware datetimes with a non-zero offset to UTC; naive datetimes are stored as they are.\n\n**Where.**\n- [`src/python/hmd_meta_types/entity.py:63-66`](https://github.com/NeuronSphere/hmd-meta-types/blob/77767d1bd2952a3a399119329eef5129445c2987/src/python/hmd_meta_types/entity.py#L63-L66) — timestamp normalization\n\n**Impact.** Stored timestamps mix naive and UTC-aware values; ordering and comparison across them are ambiguous, and engines persist them differently.\n\n**Found by.** NERD005 phase 2 corpus (`ts_naive`, `ts_naive_micro`, `ts_created_naive`).\n\n**Status.** open\n\n**Recommendation.** Decide a rule (reject naive, or treat naive as UTC) and apply it in Python and Go together.\n\nTracked in `docs/known_issues.rst` as `HMD_META_TYPES_ISSUE_006` in NeuronSphere/hmd-meta-types.",
+    "labels": [
+      "known-issue"
+    ],
+    "status": "open"
+  },
+  {
+    "id": "HMD_META_TYPES_ISSUE_007",
+    "title": "Validation failures raise generic exceptions",
+    "body_markdown": "**Summary.** Missing required fields and extra fields raise bare `Exception`; type errors raise `TypeError`; schema errors raise `ValueError`. Only some validation raises `ValidationException`.\n\n**Where.**\n- [`src/python/hmd_meta_types/entity.py:93-99`](https://github.com/NeuronSphere/hmd-meta-types/blob/77767d1bd2952a3a399119329eef5129445c2987/src/python/hmd_meta_types/entity.py#L93-L99) — required/extra fields\n- [`src/python/hmd_meta_types/entity.py:120-140`](https://github.com/NeuronSphere/hmd-meta-types/blob/77767d1bd2952a3a399119329eef5129445c2987/src/python/hmd_meta_types/entity.py#L120-L140) — type and schema errors\n- [`src/python/hmd_meta_types/entity.py:33-35`](https://github.com/NeuronSphere/hmd-meta-types/blob/77767d1bd2952a3a399119329eef5129445c2987/src/python/hmd_meta_types/entity.py#L33-L35) — ValidationException\n\n**Impact.** Callers cannot tell bad input from a server fault, so services answer HTTP 500 instead of 400/422 for invalid entities.\n\n**Found by.** NERD005 phase 2 (error categories had to be inferred from messages) and the phase 0/1 conformance runs (HTTP 500s).\n\n**Status.** open\n\n**Recommendation.** Raise `ValidationException` (or subclasses) for every input error and map it to 4xx in hmd-base-service. Go already reports categories.\n\nTracked in `docs/known_issues.rst` as `HMD_META_TYPES_ISSUE_007` in NeuronSphere/hmd-meta-types.",
+    "labels": [
+      "known-issue"
+    ],
+    "status": "open"
+  },
+  {
+    "id": "HMD_META_TYPES_ISSUE_008",
+    "title": "datetime validation depends on the CPython version",
+    "body_markdown": "**Summary.** `validation.datetime` uses `datetime.strptime`, whose behavior changes between CPython versions: 3.11 rejects a year-less Feb 29 (`%m-%d`) and 3.13 changes that rule.\n\n**Where.**\n- [`src/python/hmd_meta_types/entity.py:44-48`](https://github.com/NeuronSphere/hmd-meta-types/blob/77767d1bd2952a3a399119329eef5129445c2987/src/python/hmd_meta_types/entity.py#L44-L48) — strptime validation\n\n**Impact.** Upgrading Python silently changes which values validate. Production images are 3.11 (hmd-ms-base, hmd-img-projectbuilder).\n\n**Found by.** NERD005 phase 2 corpus (`fmt_leap_no_year`).\n\n**Status.** recorded difference\n\n**Recommendation.** Keep 3.11 behavior as the contract (the Go port follows it); revisit when images move off 3.11.\n\nTracked in `docs/known_issues.rst` as `HMD_META_TYPES_ISSUE_008` in NeuronSphere/hmd-meta-types.",
+    "labels": [
+      "known-issue"
+    ],
+    "status": "recorded difference"
+  },
+  {
+    "id": "HMD_META_TYPES_ISSUE_009",
+    "title": "Go knowingly differs on regex syntax, strptime directives and time limits",
+    "body_markdown": "**Summary.** Go compiles `regex` as RE2 (no lookaround or backreferences), supports a subset of `strptime` directives, and truncates Go-set times to microseconds within years 1-9999.\n\n**Where.**\n- [`docs/requirements/differences.rst`](https://github.com/NeuronSphere/hmd-meta-types/blob/77767d1bd2952a3a399119329eef5129445c2987/docs/requirements/differences.rst) — HMD_META_TYPES_REQ_DIFF_001-003\n\n**Impact.** A lang pack using Python-only regex constructs or rare strptime directives would validate differently. None does as of 2026-10-26.\n\n**Found by.** NERD005 phase 2.\n\n**Status.** deliberate Go difference\n\n**Recommendation.** Lint lang packs for RE2-incompatible regex and unsupported directives, so the difference never matters.\n\nTracked in `docs/known_issues.rst` as `HMD_META_TYPES_ISSUE_009` in NeuronSphere/hmd-meta-types.",
+    "labels": [
+      "known-issue"
+    ],
+    "status": "deliberate Go difference"
+  },
+  {
+    "id": "HMD_META_TYPES_ISSUE_010",
+    "title": "The TypeScript implementation is not held to the corpus",
+    "body_markdown": "**Summary.** `src/typescript` is a parallel implementation with 29 Jest tests, none of them tagged `baseline` and none run against the golden corpus.\n\n**Where.**\n- [`src/typescript/src/types.ts`](https://github.com/NeuronSphere/hmd-meta-types/blob/77767d1bd2952a3a399119329eef5129445c2987/src/typescript/src/types.ts)\n\n**Impact.** TypeScript clients may serialize differently from Python and Go without any test noticing.\n\n**Found by.** NERD005 phase 2 baseline tagging.\n\n**Status.** open\n\n**Recommendation.** Run the TypeScript implementation against `testdata/corpus` the way Go is.\n\nTracked in `docs/known_issues.rst` as `HMD_META_TYPES_ISSUE_010` in NeuronSphere/hmd-meta-types.",
+    "labels": [
+      "known-issue"
+    ],
+    "status": "open"
+  },
+  {
+    "id": "HMD_META_TYPES_ISSUE_011",
+    "title": "Not yet in Go: relationship caches, extension merging, remote $ref",
+    "body_markdown": "**Summary.** The Go runtime does not port `Noun.to_rels`/`from_rels`, does not merge `.hms` extensions (done in hmd-schema-loader), and does not fetch remote JSON Schema `$ref` targets.\n\n**Where.**\n- [`src/python/hmd_meta_types/entity.py:296-298`](https://github.com/NeuronSphere/hmd-meta-types/blob/77767d1bd2952a3a399119329eef5129445c2987/src/python/hmd_meta_types/entity.py#L296-L298) — to_rels/from_rels\n- [`src/go/metatypes`](https://github.com/NeuronSphere/hmd-meta-types/blob/77767d1bd2952a3a399119329eef5129445c2987/src/go/metatypes)\n\n**Impact.** Code that relies on these must stay on Python for now. No lang pack in the workspace uses a remote `$ref` (checked 2026-10-27).\n\n**Found by.** NERD005 phase 2.\n\n**Status.** deferred to NERD005 phase 3\n\n**Recommendation.** Port each when the Go CRUD service (phase 3) or Go ms-base (phase 6) first needs it.\n\nTracked in `docs/known_issues.rst` as `HMD_META_TYPES_ISSUE_011` in NeuronSphere/hmd-meta-types.",
+    "labels": [
+      "known-issue"
+    ],
+    "status": "deferred to NERD005 phase 3"
+  }
+]

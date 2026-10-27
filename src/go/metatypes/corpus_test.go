@@ -115,7 +115,7 @@ func runCorpus(t *testing.T, definitions map[string]*metatypes.Definition) {
 
 // TestCorpusRoundTripFromSchemas loads each corpus .hms file directly.
 //
-// Requirements: REQ_CORPUS_001, REQ_DEF_001, REQ_SER_001, REQ_SER_002, REQ_SER_003, REQ_SER_004, REQ_SER_005, REQ_DES_001, REQ_DES_002, REQ_DES_003, REQ_SET_001, REQ_SET_002, REQ_SET_003, REQ_SET_004, REQ_SET_005, REQ_SET_006, REQ_ERR_001
+// Requirements: REQ_CORPUS_001, REQ_DEF_001, REQ_SER_001, REQ_SER_002, REQ_SER_003, REQ_SER_004, REQ_SER_005, REQ_DES_001, REQ_DES_002, REQ_DES_003, REQ_DES_004, REQ_SET_001, REQ_SET_002, REQ_SET_003, REQ_SET_004, REQ_SET_005, REQ_SET_006, REQ_ERR_001
 func TestCorpusRoundTripFromSchemas(t *testing.T) {
 	defs := map[string]*metatypes.Definition{}
 	files, err := filepath.Glob(filepath.Join(corpusDir, "schemas", "hmd_meta_corpus", "*.hms"))

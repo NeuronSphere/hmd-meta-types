@@ -59,7 +59,7 @@ fmt-check:
 
 # reqtrace is hmd-cli-bartleby's Apache-2.0 traceability tool; the
 # requirement and annotation conventions here are the same as there.
-REQTRACE := github.com/neuronsphere/hmd-cli-bartleby/src/go/reqtrace/cmd/reqtrace@v0.2.0
+REQTRACE := github.com/neuronsphere/hmd-cli-bartleby/src/go/reqtrace/cmd/reqtrace@v0.3.1
 
 ## reqs: regenerate docs/requirements/traceability.rst
 reqs:

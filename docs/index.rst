@@ -270,6 +270,7 @@ The output from this is:
    :caption: Contents:
 
    requirements/index
+   known_issues
 
 Indexes and tables
 ==================
