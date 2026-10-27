@@ -1,0 +1,57 @@
+{
+  "name": "validated_formats",
+  "namespace": "hmd_meta_corpus",
+  "metatype": "noun",
+  "description": "strptime formats beyond the ISO date real lang packs use.",
+  "attributes": {
+    "day_month": {
+      "type": "string",
+      "validation": {
+        "datetime": "%d %b %Y"
+      }
+    },
+    "full_month": {
+      "type": "string",
+      "validation": {
+        "datetime": "%B %d, %Y"
+      }
+    },
+    "clock_12h": {
+      "type": "string",
+      "validation": {
+        "datetime": "%I:%M %p"
+      }
+    },
+    "ordinal": {
+      "type": "string",
+      "validation": {
+        "datetime": "%Y-%j"
+      }
+    },
+    "short_year": {
+      "type": "string",
+      "validation": {
+        "datetime": "%y%m%d"
+      }
+    },
+    "leap_no_year": {
+      "type": "string",
+      "validation": {
+        "datetime": "%m-%d"
+      }
+    },
+    "spaced": {
+      "type": "string",
+      "validation": {
+        "datetime": "%Y %m %d"
+      }
+    },
+    "both_rules": {
+      "type": "string",
+      "validation": {
+        "regex": "2026",
+        "datetime": "%Y-%m-%d"
+      }
+    }
+  }
+}

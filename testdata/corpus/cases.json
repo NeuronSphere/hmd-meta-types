@@ -1,0 +1,1094 @@
+[
+  {
+    "name": "all_full",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"identifier\": \"id-1\", \"name_text\": \"hello\", \"count\": 42, \"ratio\": 2.5, \"flag\": true, \"kind\": \"beta\", \"happened_at\": \"2026-10-26T10:31:09.123456+00:00\", \"seen_epoch\": 1761474669, \"tags\": \"WzEsIDIuNSwgImEiLCBudWxsLCB0cnVlLCB7ImsiOiBbMSwgMl19XQ==\", \"props\": \"eyJ6IjogMSwgImEiOiB7InkiOiAyLjAsICJiIjogWzNdfSwgIm0iOiAieCJ9\", \"payload\": \"AAEC/w==\", \"_created\": \"2026-10-26T10:31:09+00:00\", \"_updated\": \"2026-10-26T11:00:00.250000+00:00\"}"
+  },
+  {
+    "name": "all_full_include_schema",
+    "entity": "all_types",
+    "include_schema": true,
+    "encode_blobs": true,
+    "input": "{\"identifier\": \"id-1\", \"name_text\": \"hello\", \"count\": 42, \"ratio\": 2.5, \"flag\": true, \"kind\": \"beta\", \"happened_at\": \"2026-10-26T10:31:09.123456+00:00\", \"seen_epoch\": 1761474669, \"tags\": \"WzEsIDIuNSwgImEiLCBudWxsLCB0cnVlLCB7ImsiOiBbMSwgMl19XQ==\", \"props\": \"eyJ6IjogMSwgImEiOiB7InkiOiAyLjAsICJiIjogWzNdfSwgIm0iOiAieCJ9\", \"payload\": \"AAEC/w==\", \"_created\": \"2026-10-26T10:31:09+00:00\", \"_updated\": \"2026-10-26T11:00:00.250000+00:00\"}"
+  },
+  {
+    "name": "all_full_raw_blobs",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": false,
+    "input": "{\"identifier\": \"id-1\", \"name_text\": \"hello\", \"count\": 42, \"ratio\": 2.5, \"flag\": true, \"kind\": \"beta\", \"happened_at\": \"2026-10-26T10:31:09.123456+00:00\", \"seen_epoch\": 1761474669, \"tags\": \"WzEsIDIuNSwgImEiLCBudWxsLCB0cnVlLCB7ImsiOiBbMSwgMl19XQ==\", \"props\": \"eyJ6IjogMSwgImEiOiB7InkiOiAyLjAsICJiIjogWzNdfSwgIm0iOiAieCJ9\", \"payload\": \"AAEC/w==\", \"_created\": \"2026-10-26T10:31:09+00:00\", \"_updated\": \"2026-10-26T11:00:00.250000+00:00\"}"
+  },
+  {
+    "name": "all_empty",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{}"
+  },
+  {
+    "name": "all_nulls",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"name_text\": null, \"count\": null, \"ratio\": null, \"flag\": null, \"kind\": null, \"happened_at\": null, \"seen_epoch\": null, \"tags\": null, \"props\": null, \"payload\": null, \"identifier\": null, \"_created\": null, \"_updated\": null}"
+  },
+  {
+    "name": "all_falsy",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"name_text\": \"\", \"count\": 0, \"ratio\": 0.0, \"flag\": false, \"seen_epoch\": 0, \"tags\": [], \"props\": {}}"
+  },
+  {
+    "name": "all_key_order_reversed",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"payload\": \"QUJD\", \"tags\": \"W10=\", \"count\": 1, \"name_text\": \"x\"}"
+  },
+  {
+    "name": "all_schema_key_ignored",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"__schema\": \"hmd_meta_corpus.all_types\", \"count\": 1}"
+  },
+  {
+    "name": "all_duplicate_key_last_wins",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"count\": 1, \"name_text\": \"a\", \"count\": 2}"
+  },
+  {
+    "name": "all_extra_field",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"count\": 1, \"bogus\": 1}"
+  },
+  {
+    "name": "int_bool_accepted",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"count\": true, \"seen_epoch\": false}"
+  },
+  {
+    "name": "int_big",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"count\": 1180591620717411303424, \"seen_epoch\": -9223372036854775809}"
+  },
+  {
+    "name": "int_negative_zero",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"count\": -0}"
+  },
+  {
+    "name": "int_float_rejected",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"count\": 5.0}"
+  },
+  {
+    "name": "int_string_rejected",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"count\": \"5\"}"
+  },
+  {
+    "name": "epoch_float_rejected",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"seen_epoch\": 1.5}"
+  },
+  {
+    "name": "float_forms",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"ratio\": 1E2}"
+  },
+  {
+    "name": "float_trailing_zero",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"ratio\": 1.50}"
+  },
+  {
+    "name": "float_large",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"ratio\": 1e16}"
+  },
+  {
+    "name": "float_just_below_exp",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"ratio\": 1234567890123456.0}"
+  },
+  {
+    "name": "float_small",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"ratio\": 0.00001}"
+  },
+  {
+    "name": "float_small_plain",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"ratio\": 0.0001}"
+  },
+  {
+    "name": "float_precision",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"ratio\": 0.1}"
+  },
+  {
+    "name": "float_long",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"ratio\": 123456789.123456789}"
+  },
+  {
+    "name": "float_negative_zero",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"ratio\": -0.0}"
+  },
+  {
+    "name": "float_max",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"ratio\": 1.7976931348623157e308}"
+  },
+  {
+    "name": "float_tiny",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"ratio\": 5e-324}"
+  },
+  {
+    "name": "float_nan",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"ratio\": NaN}"
+  },
+  {
+    "name": "float_inf",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"ratio\": Infinity}"
+  },
+  {
+    "name": "float_neg_inf",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"ratio\": -Infinity}"
+  },
+  {
+    "name": "float_int_rejected",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"ratio\": 5}"
+  },
+  {
+    "name": "float_bool_rejected",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"ratio\": true}"
+  },
+  {
+    "name": "bool_int_rejected",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"flag\": 1}"
+  },
+  {
+    "name": "bool_string_rejected",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"flag\": \"true\"}"
+  },
+  {
+    "name": "enum_valid",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"kind\": \"gamma\"}"
+  },
+  {
+    "name": "enum_invalid",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"kind\": \"delta\"}"
+  },
+  {
+    "name": "enum_wrong_case",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"kind\": \"Alpha\"}"
+  },
+  {
+    "name": "string_escapes",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"name_text\": \"caf\\u00e9 \\ud83d\\ude00 \\u007f tab\\t nl\\n q\\\" bs\\\\ sl/ \\u0001\"}"
+  },
+  {
+    "name": "string_raw_utf8",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"name_text\": \"naïve 日本\"}"
+  },
+  {
+    "name": "string_int_rejected",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"name_text\": 5}"
+  },
+  {
+    "name": "identifier_int_rejected",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"identifier\": 5}"
+  },
+  {
+    "name": "ts_z",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026-10-26T10:31:09Z\"}"
+  },
+  {
+    "name": "ts_utc_offset",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026-10-26T10:31:09+00:00\"}"
+  },
+  {
+    "name": "ts_offset_fraction",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026-10-26T10:31:09.5+05:30\"}"
+  },
+  {
+    "name": "ts_negative_offset",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026-10-26T23:59:59-0800\"}"
+  },
+  {
+    "name": "ts_hour_offset",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026-10-26T10:31:09+05\"}"
+  },
+  {
+    "name": "ts_naive",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026-10-26T10:31:09\"}"
+  },
+  {
+    "name": "ts_naive_micro",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026-10-26T10:31:09.000001\"}"
+  },
+  {
+    "name": "ts_date_only",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026-10-26\"}"
+  },
+  {
+    "name": "ts_basic",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"20261026T103109\"}"
+  },
+  {
+    "name": "ts_space_sep",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026-10-26 10:31:09\"}"
+  },
+  {
+    "name": "ts_no_seconds",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026-10-26T10:31\"}"
+  },
+  {
+    "name": "ts_seven_digits",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026-10-26T10:31:09.1234567\"}"
+  },
+  {
+    "name": "ts_three_digits",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026-10-26T10:31:09.123Z\"}"
+  },
+  {
+    "name": "ts_year_999",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"0999-01-02T03:04:05\"}"
+  },
+  {
+    "name": "ts_crosses_day",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026-12-31T23:30:00-01:00\"}"
+  },
+  {
+    "name": "ts_week",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026-W43\"}"
+  },
+  {
+    "name": "ts_week_day",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026-W43-1T08:00\"}"
+  },
+  {
+    "name": "ts_week_basic",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026W437\"}"
+  },
+  {
+    "name": "ts_ordinal",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026-299\"}"
+  },
+  {
+    "name": "ts_ordinal_basic",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026299T12\"}"
+  },
+  {
+    "name": "ts_year_month",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026-10\"}"
+  },
+  {
+    "name": "ts_year_only",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026\"}"
+  },
+  {
+    "name": "ts_hour_24",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026-10-26T24:00:00\"}"
+  },
+  {
+    "name": "ts_hour_only_z",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026-10-26T10Z\"}"
+  },
+  {
+    "name": "ts_comma_fraction",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026-10-26T10:31:09,5\"}"
+  },
+  {
+    "name": "ts_basic_offset",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026-10-26T103109+0530\"}"
+  },
+  {
+    "name": "ts_neg_zero_offset",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026-10-26T10:31:09-00:00\"}"
+  },
+  {
+    "name": "ts_other_separator",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026-10-26x10:31:09\"}"
+  },
+  {
+    "name": "ts_leap_day",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2024-02-29T00:00:00\"}"
+  },
+  {
+    "name": "ts_bad_month",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026-13-01\"}"
+  },
+  {
+    "name": "ts_bad_leap_day",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026-02-29\"}"
+  },
+  {
+    "name": "ts_hour_24_minutes",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026-10-26T24:30\"}"
+  },
+  {
+    "name": "ts_bad_week",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026-W54\"}"
+  },
+  {
+    "name": "ts_bad_ordinal",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026-366\"}"
+  },
+  {
+    "name": "ts_offset_too_big",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026-10-26T10:31:09+24:00\"}"
+  },
+  {
+    "name": "ts_mixed_colons",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026-10-26T10:3109\"}"
+  },
+  {
+    "name": "ts_unicode",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026-10-26T10:31:09\\u00c2\\u00a0\"}"
+  },
+  {
+    "name": "ts_trailing",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026-10-26T10:31:09Zjunk\"}"
+  },
+  {
+    "name": "ts_too_short_time",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"2026-10-26T1\"}"
+  },
+  {
+    "name": "ts_empty_rejected",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"\"}"
+  },
+  {
+    "name": "ts_garbage",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": \"not a date\"}"
+  },
+  {
+    "name": "ts_number",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"happened_at\": 5}"
+  },
+  {
+    "name": "ts_created_naive",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"_created\": \"2026-10-26T10:31:09\"}"
+  },
+  {
+    "name": "blob_canonical",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"payload\": \"QUJD\"}"
+  },
+  {
+    "name": "blob_high_bytes",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"payload\": \"/w==\"}"
+  },
+  {
+    "name": "blob_junk_chars",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"payload\": \"QU JD!\"}"
+  },
+  {
+    "name": "blob_bad_padding",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"payload\": \"QUI\"}"
+  },
+  {
+    "name": "blob_empty_rejected",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"payload\": \"\"}"
+  },
+  {
+    "name": "blob_number",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"payload\": 5}"
+  },
+  {
+    "name": "coll_nested",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"tags\": \"W1sxLCBbMiwgWzNdXV0sIHsiYiI6IDEsICJhIjogMn0sIC0wLjAsIDFlKzEwMCwgMTAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBd\"}"
+  },
+  {
+    "name": "coll_compact_json",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"tags\": \"WzEsMix7ImEiOjF9XQ==\"}"
+  },
+  {
+    "name": "coll_literal_forms",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"tags\": \"WzEuNTAsIDFFMiwgLTAsIDAuMDAwMDEsIE5hTl0=\"}"
+  },
+  {
+    "name": "coll_unicode_ascii_escaped",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"tags\": \"WyJjYWZcdTAwZTkiLCAiXHVkODNkXHVkZTAwIl0=\"}"
+  },
+  {
+    "name": "coll_utf8_bytes",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"tags\": \"WyJjYWbDqSIsICLml6XmnKwiXQ==\"}"
+  },
+  {
+    "name": "coll_duplicate_keys",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"tags\": \"W3siYSI6IDEsICJiIjogMiwgImEiOiAzfV0=\"}"
+  },
+  {
+    "name": "coll_empty_raw",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"tags\": []}"
+  },
+  {
+    "name": "coll_empty_encoded",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"tags\": \"W10=\"}"
+  },
+  {
+    "name": "coll_raw_nonempty",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"tags\": [1]}"
+  },
+  {
+    "name": "coll_is_dict",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"tags\": \"eyJhIjogMX0=\"}"
+  },
+  {
+    "name": "coll_bad_json",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"tags\": \"WzEsIA==\"}"
+  },
+  {
+    "name": "map_ordered",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"props\": \"eyJ6IjogMSwgImEiOiAyLCAibSI6IHsieSI6IG51bGwsICJiIjogdHJ1ZX19\"}"
+  },
+  {
+    "name": "map_empty_raw",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"props\": {}}"
+  },
+  {
+    "name": "map_raw_nonempty",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"props\": {\"a\": 1}}"
+  },
+  {
+    "name": "map_is_list",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"props\": \"WzFd\"}"
+  },
+  {
+    "name": "map_utf8_bytes",
+    "entity": "all_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"props\": \"eyJrIjogIsO8In0=\"}"
+  },
+  {
+    "name": "req_complete",
+    "entity": "required_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"payload\": \"QUJD\", \"props\": \"e30=\", \"tags\": \"W10=\", \"seen_epoch\": 1, \"happened_at\": \"2026-10-26T10:31:09+00:00\", \"kind\": \"alpha\", \"flag\": false, \"ratio\": 0.5, \"count\": 0, \"name_text\": \"\"}"
+  },
+  {
+    "name": "req_complete_include_schema",
+    "entity": "required_types",
+    "include_schema": true,
+    "encode_blobs": true,
+    "input": "{\"payload\": \"QUJD\", \"props\": \"e30=\", \"tags\": \"W10=\", \"seen_epoch\": 1, \"happened_at\": \"2026-10-26T10:31:09+00:00\", \"kind\": \"alpha\", \"flag\": false, \"ratio\": 0.5, \"count\": 0, \"name_text\": \"\"}"
+  },
+  {
+    "name": "req_missing_one",
+    "entity": "required_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"payload\": \"QUJD\", \"props\": \"e30=\", \"tags\": \"W10=\", \"seen_epoch\": 1, \"happened_at\": \"2026-10-26T10:31:09+00:00\", \"kind\": \"alpha\", \"flag\": false, \"ratio\": 0.5, \"count\": 0, \"identifier\": \"x\"}"
+  },
+  {
+    "name": "req_missing_and_extra",
+    "entity": "required_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"payload\": \"QUJD\", \"props\": \"e30=\", \"tags\": \"W10=\", \"seen_epoch\": 1, \"happened_at\": \"2026-10-26T10:31:09+00:00\", \"kind\": \"alpha\", \"flag\": false, \"ratio\": 0.5, \"count\": 0, \"bogus\": 1}"
+  },
+  {
+    "name": "req_null",
+    "entity": "required_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"payload\": \"QUJD\", \"props\": \"e30=\", \"tags\": \"W10=\", \"seen_epoch\": 1, \"happened_at\": \"2026-10-26T10:31:09+00:00\", \"kind\": \"alpha\", \"flag\": false, \"ratio\": 0.5, \"count\": 0, \"name_text\": null}"
+  },
+  {
+    "name": "req_null_internal_ok",
+    "entity": "required_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"payload\": \"QUJD\", \"props\": \"e30=\", \"tags\": \"W10=\", \"seen_epoch\": 1, \"happened_at\": \"2026-10-26T10:31:09+00:00\", \"kind\": \"alpha\", \"flag\": false, \"ratio\": 0.5, \"count\": 0, \"name_text\": \"n\", \"identifier\": null}"
+  },
+  {
+    "name": "val_all_ok",
+    "entity": "validated",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"code\": \"ABC-123\", \"iso_date\": \"2026-10-26\", \"stamp_text\": \"2026-10-26T10:31:09.123456+0000\", \"score\": 100, \"weight\": 9.5}"
+  },
+  {
+    "name": "val_regex_prefix_match",
+    "entity": "validated",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"code\": \"ABC-12x\"}"
+  },
+  {
+    "name": "val_regex_fail",
+    "entity": "validated",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"code\": \"abc-123\"}"
+  },
+  {
+    "name": "val_date_bad_day",
+    "entity": "validated",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"iso_date\": \"2026-02-30\"}"
+  },
+  {
+    "name": "val_date_bad_format",
+    "entity": "validated",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"iso_date\": \"26-10-2026\"}"
+  },
+  {
+    "name": "val_date_trailing",
+    "entity": "validated",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"iso_date\": \"2026-10-26T00:00\"}"
+  },
+  {
+    "name": "val_date_unpadded",
+    "entity": "validated",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"iso_date\": \"2026-1-5\"}"
+  },
+  {
+    "name": "val_stamp_bad_offset",
+    "entity": "validated",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"stamp_text\": \"2026-10-26T10:31:09.1+25:00\"}"
+  },
+  {
+    "name": "val_score_min_edge",
+    "entity": "validated",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"score\": 0}"
+  },
+  {
+    "name": "val_score_over",
+    "entity": "validated",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"score\": 101}"
+  },
+  {
+    "name": "val_score_under",
+    "entity": "validated",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"score\": -1}"
+  },
+  {
+    "name": "val_score_bool",
+    "entity": "validated",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"score\": true}"
+  },
+  {
+    "name": "val_weight_min_edge",
+    "entity": "validated",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"weight\": 0.5}"
+  },
+  {
+    "name": "val_weight_under",
+    "entity": "validated",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"weight\": 0.4}"
+  },
+  {
+    "name": "val_weight_nan",
+    "entity": "validated",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"weight\": NaN}"
+  },
+  {
+    "name": "fmt_all_ok",
+    "entity": "validated_formats",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"day_month\": \"26 Oct 2026\", \"full_month\": \"OCTOBER 26, 2026\", \"clock_12h\": \"12:30 am\", \"ordinal\": \"2026-299\", \"short_year\": \"261026\", \"leap_no_year\": \"02-28\", \"spaced\": \"2026   10  26\", \"both_rules\": \"2026-10-26\"}"
+  },
+  {
+    "name": "fmt_leap_no_year",
+    "entity": "validated_formats",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"leap_no_year\": \"02-29\"}"
+  },
+  {
+    "name": "fmt_bad_month_name",
+    "entity": "validated_formats",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"day_month\": \"26 Okt 2026\"}"
+  },
+  {
+    "name": "fmt_bad_clock",
+    "entity": "validated_formats",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"clock_12h\": \"13:30 PM\"}"
+  },
+  {
+    "name": "fmt_day_366_nonleap",
+    "entity": "validated_formats",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"ordinal\": \"2026-366\"}"
+  },
+  {
+    "name": "fmt_day_366_leap",
+    "entity": "validated_formats",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"ordinal\": \"2024-366\"}"
+  },
+  {
+    "name": "fmt_short_year_69",
+    "entity": "validated_formats",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"short_year\": \"690101\"}"
+  },
+  {
+    "name": "fmt_unpadded_day",
+    "entity": "validated_formats",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"day_month\": \"5 Oct 2026\"}"
+  },
+  {
+    "name": "fmt_space_padded_day",
+    "entity": "validated_formats",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"day_month\": \" 5 Oct 2026\"}"
+  },
+  {
+    "name": "fmt_regex_ok_date_bad",
+    "entity": "validated_formats",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"both_rules\": \"2026-13-01\"}"
+  },
+  {
+    "name": "fmt_regex_bad_date_ok",
+    "entity": "validated_formats",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"both_rules\": \"2025-10-26\"}"
+  },
+  {
+    "name": "schema_ok",
+    "entity": "with_schema",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"items\": \"W3sibmFtZSI6ICJhIiwgIm4iOiAxfSwgeyJuYW1lIjogImIifV0=\", \"config\": \"eyJtb2RlIjogImEiLCAibGltaXRzIjogeyJtYXgiOiAyLjV9fQ==\"}"
+  },
+  {
+    "name": "schema_item_missing_name",
+    "entity": "with_schema",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"items\": \"W3sibiI6IDF9XQ==\"}"
+  },
+  {
+    "name": "schema_item_wrong_type",
+    "entity": "with_schema",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"items\": \"W3sibmFtZSI6ICJhIiwgIm4iOiAxLjV9XQ==\"}"
+  },
+  {
+    "name": "schema_config_extra",
+    "entity": "with_schema",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"config\": \"eyJtb2RlIjogImEiLCAieCI6IDF9\"}"
+  },
+  {
+    "name": "schema_config_bad_enum",
+    "entity": "with_schema",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"config\": \"eyJtb2RlIjogImMifQ==\"}"
+  },
+  {
+    "name": "schema_config_negative",
+    "entity": "with_schema",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"config\": \"eyJtb2RlIjogImIiLCAibGltaXRzIjogeyJtYXgiOiAtMX19\"}"
+  },
+  {
+    "name": "schema_empty_raw_skips",
+    "entity": "with_schema",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"items\": [], \"config\": {}}"
+  },
+  {
+    "name": "bad_label_only",
+    "entity": "bad_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"label\": \"x\"}"
+  },
+  {
+    "name": "bad_int_type",
+    "entity": "bad_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"x_pos\": 1}"
+  },
+  {
+    "name": "bad_boolean_type",
+    "entity": "bad_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"active\": true}"
+  },
+  {
+    "name": "bad_null_skips_type",
+    "entity": "bad_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"x_pos\": null, \"active\": null}"
+  },
+  {
+    "name": "rel_full",
+    "entity": "all_types_links_required_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"ref_from\": \"hmd_meta_corpus.all_types/a1\", \"note\": \"n\", \"strength\": 0.75, \"since\": \"2026-10-26T10:31:09Z\", \"ref_to\": \"hmd_meta_corpus.required_types/r1\", \"identifier\": \"rel-1\"}"
+  },
+  {
+    "name": "rel_full_include_schema",
+    "entity": "all_types_links_required_types",
+    "include_schema": true,
+    "encode_blobs": true,
+    "input": "{\"ref_from\": \"hmd_meta_corpus.all_types/a1\", \"note\": \"n\", \"strength\": 0.75, \"since\": \"2026-10-26T10:31:09Z\", \"ref_to\": \"hmd_meta_corpus.required_types/r1\", \"identifier\": \"rel-1\"}"
+  },
+  {
+    "name": "rel_minimal",
+    "entity": "all_types_links_required_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"ref_to\": \"t\", \"ref_from\": \"f\", \"note\": \"\"}"
+  },
+  {
+    "name": "rel_missing_ref_to",
+    "entity": "all_types_links_required_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"ref_from\": \"f\", \"note\": \"n\"}"
+  },
+  {
+    "name": "rel_ref_not_string",
+    "entity": "all_types_links_required_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"ref_from\": 5, \"ref_to\": \"t\", \"note\": \"n\"}"
+  },
+  {
+    "name": "rel_missing_required",
+    "entity": "all_types_links_required_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"ref_from\": \"f\", \"ref_to\": \"t\"}"
+  },
+  {
+    "name": "rel_ref_null",
+    "entity": "all_types_links_required_types",
+    "include_schema": false,
+    "encode_blobs": true,
+    "input": "{\"ref_from\": null, \"ref_to\": \"t\", \"note\": \"n\"}"
+  }
+]

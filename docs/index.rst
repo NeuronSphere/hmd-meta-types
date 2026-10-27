@@ -269,6 +269,7 @@ The output from this is:
    :maxdepth: 2
    :caption: Contents:
 
+   requirements/index
 
 Indexes and tables
 ==================

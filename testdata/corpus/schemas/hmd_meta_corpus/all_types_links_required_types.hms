@@ -1,0 +1,13 @@
+{
+  "name": "all_types_links_required_types",
+  "namespace": "hmd_meta_corpus",
+  "metatype": "relationship",
+  "ref_from": "hmd_meta_corpus.all_types",
+  "ref_to": "hmd_meta_corpus.required_types",
+  "description": "A relationship with its own attributes.",
+  "attributes": {
+    "note": {"type": "string", "required": true},
+    "strength": {"type": "float"},
+    "since": {"type": "timestamp"}
+  }
+}

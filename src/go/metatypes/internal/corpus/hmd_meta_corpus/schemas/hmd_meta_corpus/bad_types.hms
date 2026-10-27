@@ -1,0 +1,17 @@
+{
+  "name": "bad_types",
+  "namespace": "hmd_meta_corpus",
+  "metatype": "noun",
+  "description": "Type names that are not meta-types types but appear in real lang packs (hmd-lang-mesh-proto, hmd-lang-telemetry-debug).",
+  "attributes": {
+    "x_pos": {
+      "type": "int"
+    },
+    "active": {
+      "type": "boolean"
+    },
+    "label": {
+      "type": "string"
+    }
+  }
+}

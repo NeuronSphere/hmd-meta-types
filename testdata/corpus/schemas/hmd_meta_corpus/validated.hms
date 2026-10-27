@@ -1,0 +1,13 @@
+{
+  "name": "validated",
+  "namespace": "hmd_meta_corpus",
+  "metatype": "noun",
+  "description": "Every validation rule meta-types applies.",
+  "attributes": {
+    "code": {"type": "string", "validation": {"regex": "[A-Z]{3}-[0-9]+"}},
+    "iso_date": {"type": "string", "validation": {"datetime": "%Y-%m-%d"}},
+    "stamp_text": {"type": "string", "validation": {"datetime": "%Y-%m-%dT%H:%M:%S.%f%z"}},
+    "score": {"type": "integer", "validation": {"min": 0, "max": 100}},
+    "weight": {"type": "float", "validation": {"min": 0.5, "max": 9.5}}
+  }
+}

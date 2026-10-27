@@ -1,0 +1,53 @@
+{
+  "name": "all_types",
+  "namespace": "hmd_meta_corpus",
+  "metatype": "noun",
+  "description": "Every attribute type, all optional, in a deliberately unsorted order.",
+  "attributes": {
+    "name_text": {
+      "type": "string",
+      "description": "A string."
+    },
+    "count": {
+      "type": "integer",
+      "description": "An integer."
+    },
+    "ratio": {
+      "type": "float",
+      "description": "A float."
+    },
+    "flag": {
+      "type": "bool",
+      "description": "A boolean."
+    },
+    "kind": {
+      "type": "enum",
+      "enum_def": [
+        "alpha",
+        "beta",
+        "gamma"
+      ],
+      "description": "An enum."
+    },
+    "happened_at": {
+      "type": "timestamp",
+      "description": "A timestamp."
+    },
+    "seen_epoch": {
+      "type": "epoch",
+      "description": "Seconds since the epoch."
+    },
+    "tags": {
+      "type": "collection",
+      "description": "A list."
+    },
+    "props": {
+      "type": "mapping",
+      "description": "A dict."
+    },
+    "payload": {
+      "type": "blob",
+      "description": "Bytes."
+    }
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "name": "required_types",
+  "namespace": "hmd_meta_corpus",
+  "metatype": "noun",
+  "description": "Every attribute type, all required.",
+  "attributes": {
+    "payload": {
+      "type": "blob",
+      "required": true
+    },
+    "props": {
+      "type": "mapping",
+      "required": true
+    },
+    "tags": {
+      "type": "collection",
+      "required": true
+    },
+    "seen_epoch": {
+      "type": "epoch",
+      "required": true
+    },
+    "happened_at": {
+      "type": "timestamp",
+      "required": true
+    },
+    "kind": {
+      "type": "enum",
+      "enum_def": [
+        "alpha",
+        "beta",
+        "gamma"
+      ],
+      "required": true
+    },
+    "flag": {
+      "type": "bool",
+      "required": true
+    },
+    "ratio": {
+      "type": "float",
+      "required": true
+    },
+    "count": {
+      "type": "integer",
+      "required": true
+    },
+    "name_text": {
+      "type": "string",
+      "required": true
+    }
+  }
+}
